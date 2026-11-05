@@ -19,7 +19,7 @@ def render(next_page):
     steps = [
         ("Look at your SIP", "On the left you see the fund, invested amount, current value, and the XIRR, Units "
                              "and NAV tiles."),
-        ("Ask FinSaar", "Click <b>Explain this</b>, or <b>ⓘ Explain</b> on the XIRR, Units or NAV tile. Then tap a "
+        ("Ask FinSaar", "Click <b>Explain this</b>, or tap the <b>XIRR, Units or NAV card</b> (e.g. <i>Why so negative?</i>). Then tap a "
                         "suggested question or type your own, in English or Hinglish."),
         ("Tell it if it helped", "<b>Yes, clear</b>: it remembers the terms.<br><b>Explain simpler</b>: simpler "
                                  "words, now and later.<br><b>Ask another</b>: next question."),

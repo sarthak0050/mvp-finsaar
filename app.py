@@ -187,14 +187,13 @@ def sip_screen():
             f'<div class="row"><span>Total returns</span><b class="{gain_cls}">{sign}{calc.inr(s.gain)} '
             f'({calc.signed_pct(s.gain_pct, 2)})</b></div></div>', unsafe_allow_html=True)
 
-        tiles = [("XIRR", calc.signed_pct(s.xirr_pct, 1)), ("Units", f"{s.total_units:.2f}"),
-                 ("NAV", f"{calc.inr(s.current_nav, 2)}")]
+        tiles = [("XIRR", calc.signed_pct(s.xirr_pct, 1), "Why so negative?", "Why is my XIRR so negative?"),
+                 ("Units", f"{s.total_units:.2f}", "Up, but value down?", "Why are units up but value down?"),
+                 ("NAV", calc.inr(s.current_nav, 2), "What is NAV?", "What does NAV mean for me?")]
         cols = st.container(key="tilebtn").columns(3)
-        for col, (name, val) in zip(cols, tiles):
-            col.markdown(f'<div class="tile"><div class="lbl">{name}</div><div class="v">{val}</div></div>',
-                         unsafe_allow_html=True)
-            col.button("ⓘ Explain", key=f"tile_{name}", on_click=ask, args=(TILE_QUESTIONS[name],),
-                       type="tertiary", help=f"What does my {name} mean for me? Ask FinSaar")
+        for col, (name, val, hint, question) in zip(cols, tiles):
+            col.button(f"{name}  \n**{val}**  \n:green[{hint}]", key=f"tile_{name}", on_click=ask, args=(question,),
+                       help=f"Ask FinSaar: {question}", width="stretch")
 
         if s.is_down and not st.session_state.panel_open and not st.session_state.card_dismissed:
             st.markdown(f'<div class="fs-card"><div class="fs-label">✦ FinSaar</div>Your SIP is '
@@ -213,7 +212,7 @@ def sip_screen():
         st.markdown('<div class="section-title">✦ FinSaar · Aapke SIP ka saar</div>', unsafe_allow_html=True)
         if not st.session_state.panel_open:
             st.markdown('<div class="fs-empty">FinSaar explains your own SIP numbers in English or Hinglish. '
-                        'Click <b>Explain this</b>, or <b>ⓘ Explain</b> on any tile, to start.</div>',
+                        'Click <b>Explain this</b>, or tap the XIRR, Units or NAV card, to start.</div>',
                         unsafe_allow_html=True)
             st.write("")
             if st.button("✦ Ask FinSaar about this SIP", key="open_panel"):
