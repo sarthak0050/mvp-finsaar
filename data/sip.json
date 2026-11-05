@@ -4,11 +4,61 @@
   "category": "Flexi Cap · Direct · Growth (fictional)",
   "monthly_amount": 2000,
   "instalments": [
-    {"date": "2026-06-05", "amount": 2000, "nav": 24.00},
-    {"date": "2026-07-06", "amount": 2000, "nav": 24.90},
-    {"date": "2026-08-05", "amount": 2000, "nav": 24.60},
-    {"date": "2026-09-07", "amount": 2000, "nav": 24.10},
-    {"date": "2026-10-05", "amount": 2000, "nav": 23.75}
+    {
+      "date": "2026-06-05",
+      "amount": 2000,
+      "nav": 24.0
+    },
+    {
+      "date": "2026-07-06",
+      "amount": 2000,
+      "nav": 24.9
+    },
+    {
+      "date": "2026-08-05",
+      "amount": 2000,
+      "nav": 24.6
+    },
+    {
+      "date": "2026-09-07",
+      "amount": 2000,
+      "nav": 24.1
+    },
+    {
+      "date": "2026-10-05",
+      "amount": 2000,
+      "nav": 23.75
+    }
   ],
-  "today": {"date": "2026-11-05", "nav": 23.06}
+  "today": {
+    "date": "2026-11-05",
+    "nav": 23.06
+  },
+  "scenarios": [
+    {
+      "id": "start",
+      "label": "① First instalment",
+      "date": "2026-06-05",
+      "nav": 24.0,
+      "instalments": 1,
+      "next_instalment": "2026-07-05"
+    },
+    {
+      "id": "midway",
+      "label": "② Month 3 · value up",
+      "date": "2026-08-20",
+      "nav": 25.1,
+      "instalments": 3,
+      "next_instalment": "2026-09-05"
+    },
+    {
+      "id": "dip",
+      "label": "③ The dip · today",
+      "date": "2026-11-05",
+      "nav": 23.06,
+      "instalments": 5,
+      "next_instalment": "2026-12-05"
+    }
+  ],
+  "default_scenario": "dip"
 }

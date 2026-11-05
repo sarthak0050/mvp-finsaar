@@ -55,3 +55,13 @@ Source: AMFI investor education, {AMFI_LINK}
 FinSaar explains your own SIP numbers and general terms. It cannot recommend any fund or stock, cannot tell you whether to continue, pause or stop, and cannot predict future NAV, value or market moves. No one can know these in advance. For guidance on your situation, you can speak to a SEBI-registered investment adviser.
 Keywords: recommend, which fund, best fund, switch, predict, future, next year, recover, will, forecast, kaunsa fund, advice, adviser
 Source: AMFI investor education, {AMFI_LINK}
+
+## K10 · Why XIRR is not shown at the start
+XIRR turns a gain or loss into a yearly rate, using the dates of your instalments. On the day of your first instalment there is no time period yet, so there is nothing to turn into a yearly rate, and apps usually show XIRR only after some time. In the first months it can swing a lot, because a small change is stretched to a full year.
+Keywords: xirr not shown, no xirr, xirr missing, first instalment, first sip, start, day one, abhi xirr kyun nahi, blank
+Source: AMFI investor education, {AMFI_LINK}
+
+## K11 · When value is above what you invested
+If today's NAV is above your average buy NAV, your current value is above the amount invested: a gain on paper. Like a paper loss, it changes every day with the NAV and becomes a real (booked) gain only if you redeem units. A gain today says nothing certain about tomorrow.
+Keywords: value up, profit, gain, above, munafa, badh gaya, upar, positive, green, why is my value up
+Source: AMFI investor education, {AMFI_LINK}

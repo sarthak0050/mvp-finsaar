@@ -6,6 +6,24 @@ value falls below what they invested, in English or Hinglish. Every AI answer pa
 
 > Concept prototype · Not investment advice · Not affiliated with Groww. All data is fictional.
 
+## Where FinSaar shows up
+
+The MVP page looks like a typical investing app's fund page (holdings, SIP details, transactions), with FinSaar
+built into it at every moment of the journey:
+
+| Moment | FinSaar nudge | Suggested questions |
+|---|---|---|
+| ① First instalment | "₹2,000 bought 83.33 units at NAV ₹24.00" | What did my first ₹2,000 buy? · Why is XIRR not shown yet? |
+| ② Month 3 · value up | "Your SIP is ₹148 above what you invested" | Why is my value up? · Why did I get fewer units in July? · Should I invest more? |
+| ③ The dip · today | "Your SIP is ₹496 below what you invested" | Iska matlab paisa doob gaya? · What does XIRR mean? · Should I stop? |
+
+* **Tap any number** (Returns, XIRR, Units, NAV) → a "FinSaar explains" sheet opens on the spot.
+* **In between:** each transaction has a ✦ (Why more units? / Why fewer units?) that explains that instalment.
+* **Chat** on the right for anything else. Every path uses the same pipeline and the same gate.
+
+The layout follows common investing-app patterns but uses FinSaar's own styling; it does not copy any real
+app's logo or branding.
+
 ## How an answer is made
 
 ```
@@ -55,7 +73,7 @@ The phrase lists live at the top of `gate.py`; add to them as you find new cases
 | `eval_page.py` | golden-set evaluation page |
 | `config.py` | reads `st.secrets` / env vars |
 | `ui_style.py` | phone-frame CSS + banner |
-| `data/sip.json` | the fictional SIP |
+| `data/sip.json` | the fictional SIP, plus three journey moments (`scenarios`): first instalment, month 3 (value up), the dip (today) |
 | `data/knowledge.md` | plain-language definitions, each with a source line (`{AMFI_LINK}` is filled from secrets) |
 | `data/golden_set.csv` | golden questions |
 | `tests/` | unit tests for calc, gate and retrieval (`python -m pytest -q`) |

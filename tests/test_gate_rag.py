@@ -63,7 +63,7 @@ def test_decline_needs_decision_line():
 
 def test_keyword_retrieval():
     chunks = rag.load_chunks()
-    assert len(chunks) == 9 and all(c.source for c in chunks)
+    assert len(chunks) == 11 and all(c.source for c in chunks)
     s = rag.keyword_scores("What does XIRR mean for my SIP?", chunks)
     assert chunks[max(range(len(s)), key=s.__getitem__)].id == "K5"
     s = rag.keyword_scores("Should I stop my SIP?", chunks)
@@ -76,3 +76,13 @@ def test_advice_negated_is_ok_but_real_advice_still_fails():
     assert not g("I can't say for sure, but you should continue your SIP.").passed
     assert not g("Don't worry. You should stay invested.").passed
     assert not g("Main nahi bata sakta lekin SIP band kar do.").passed
+
+
+def test_buy_more_units_is_description_not_advice():
+    import pipeline
+    assert pipeline.classify("Why did my 5 Oct 2026 instalment buy more units?") == "answer"
+    assert pipeline.classify("Should I invest more?") == "decline"
+    assert pipeline.classify("Kya main SIP band kar du?") == "decline"
+    assert pipeline.classify("What will my SIP be worth next year?") == "uncertain"
+    assert g("A lower NAV lets the same ₹2,000 buy more units.").passed
+    assert not g("NAV is low, so invest more now.").passed

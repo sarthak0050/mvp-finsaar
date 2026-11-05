@@ -13,7 +13,7 @@ ADVICE_PHRASES = [
     "i suggest", "i'd suggest", "i advise", "my advice", "stay invested", "keep investing",
     "keep your sip", "continue your sip", "continue the sip", "don't stop", "do not stop",
     "better to stop", "better to continue", "best to", "good time to buy", "good time to invest",
-    "buy more", "invest more", "switch to", "consider switching", "hold on", "hold your",
+    "buy more now", "invest more now", "consider buying more", "consider investing more", "good idea to invest", "add more money", "switch to", "consider switching", "hold on", "hold your",
     "sell your units now", "redeem now", "stop your sip now", "pause your sip now",
     # Hinglish
     "band kar do", "band kardo", "band karo", "band mat karo", "continue karo", "continue rakho",

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import time
 
 import streamlit as st
 
@@ -55,8 +56,8 @@ DECLINE_ADDON = """
 THIS IS A DECISION / RECOMMENDATION QUESTION. Do not answer it with a decision.
 - ONLY if it asks which fund or stock to pick or switch to: say clearly "I can't recommend any fund or stock"
   (Hinglish: "Main koi fund ya stock recommend nahi kar sakta") and name no fund.
-- Otherwise briefly explain, in neutral general terms from the KNOWLEDGE chunks, what pause, skip,
-  change amount and stop each do, and note the units already held remain in the fund.
+- Otherwise briefly explain, in neutral general terms from the KNOWLEDGE chunks, what ALL FOUR options do:
+  pause, skip, change amount and stop (name each one, one short sentence each), and note the units already held remain in the fund.
 - Do not say which option is better. End with exactly: "The decision is yours."
   (Hinglish: "Faisla aapka hai (the decision is yours).")
 """
@@ -71,7 +72,7 @@ def _profile_text(profile: dict) -> str:
     lines = [
         f"- Level: {'first-time investor, no finance background' if level == 'beginner' else 'knows the basics of mutual funds'}",
         f"- Language: {'Hinglish (Hindi + English mix) written in Roman script only, no Devanagari' if lang == 'hinglish' else 'simple English'}",
-        f"- Stage: first {profile.get('n_instalments', 5)} months of their first SIP; value is below the amount invested",
+        f"- Stage: {profile.get('stage', 'early months of their first SIP')}",
         f"- Word limit: at most {limit} words. Short sentences.",
     ]
     understood = profile.get("understood") or []
@@ -128,8 +129,11 @@ def call_json(system: str, prompt: str, schema: dict, temperature: float = 0.3) 
     fb = config.fallback_model()
     if fb and fb not in models:
         models.append(fb)
+    models.append(config.model_name())  # one last try after a short pause (busy spikes are brief)
     text, last_err = None, None
-    for model in models:
+    for n, model in enumerate(models):
+        if n == len(models) - 1 and n > 0:
+            time.sleep(1.5)
         try:
             resp = get_client().models.generate_content(
                 model=model,

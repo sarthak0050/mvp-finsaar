@@ -52,3 +52,13 @@ def test_facts_block_has_key_numbers(s):
     fb = calc.facts_block(s)
     for token in ["₹10,000", "412.15", "₹24.26", "₹23.06", "₹9,504", "₹496", "−18.5%"]:
         assert token in fb
+
+
+def test_journey_scenarios():
+    start = calc.compute(scenario="start")
+    assert start.invested == 2000 and start.xirr_pct is None and not start.is_down and not start.is_up
+    mid = calc.compute(scenario="midway")
+    assert mid.invested == 6000 and mid.is_up
+    assert mid.gain == pytest.approx(148.38, abs=0.01)
+    assert mid.xirr_pct > 0
+    assert "not shown yet" in calc.facts_block(start)

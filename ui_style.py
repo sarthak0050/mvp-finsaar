@@ -29,20 +29,21 @@ CSS = f"""
 /* rows of small buttons stay side by side even on narrow screens */
 .st-key-tilebtn [data-testid="stHorizontalBlock"], [class*="st-key-fb"] [data-testid="stHorizontalBlock"],
 .st-key-nudge [data-testid="stHorizontalBlock"], .st-key-askbox [data-testid="stHorizontalBlock"],
-.st-key-membox [data-testid="stHorizontalBlock"] {{ flex-wrap: nowrap !important; gap: 0.5rem !important; }}
+.st-key-membox [data-testid="stHorizontalBlock"], .st-key-txlist [data-testid="stHorizontalBlock"]
+  {{ flex-wrap: nowrap !important; gap: 0.5rem !important; }}
 .st-key-tilebtn [data-testid="stColumn"], [class*="st-key-fb"] [data-testid="stColumn"],
 .st-key-nudge [data-testid="stColumn"], .st-key-askbox [data-testid="stColumn"],
-.st-key-membox [data-testid="stColumn"] {{ min-width: 0 !important; }}
+.st-key-membox [data-testid="stColumn"], .st-key-txlist [data-testid="stColumn"] {{ min-width: 0 !important; }}
 
 .stButton button {{ border-radius: 18px; font-size: 0.85rem; padding: 0.3rem 0.8rem; min-height: 2.1rem; width: 100%; }}
 .stButton button p, .stButton button div {{ white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }}
-.st-key-tilebtn .stButton button {{ border-radius: 12px; border: 1px solid #e6e6e6; background: #fff;
-  min-height: 92px; padding: 10px 8px; align-items: center; transition: border-color .15s, background .15s; }}
-.st-key-tilebtn .stButton button:hover {{ border-color: {GREEN}; background: #F3F8EE; color: inherit; }}
-.st-key-tilebtn .stButton button p {{ margin: 0; line-height: 1.45; font-size: 0.8rem !important; color: #6b6b6b;
-  text-align: center; }}
-.st-key-tilebtn .stButton button p span {{ font-weight: 700; color: {GREEN} !important; }}
-.st-key-tilebtn .stButton button strong {{ color: #1d1d1f; font-size: 1.15rem; }}
+.st-key-tilebtn .stButton button {{ border-radius: 12px; border: 1px solid #ececec; background: #fff;
+  min-height: 70px; padding: 8px 6px; transition: border-color .15s, background .15s, box-shadow .15s; }}
+.st-key-tilebtn .stButton button:hover {{ border-color: {GREEN}; background: #F6FAF2; box-shadow: 0 2px 8px rgba(63,125,10,.12); }}
+.st-key-tilebtn .stButton button p {{ margin: 0; line-height: 1.5; font-size: 0.78rem !important; color: #6b6b6b; text-align: center; }}
+.st-key-tilebtn .stButton button strong {{ color: #1d1d1f !important; font-size: 1.02rem; }}
+.st-key-tilebtn .stButton button span[class] strong, .st-key-tilebtn .stButton button span[style] strong {{ color: inherit !important; }}
+.st-key-tilebtn .stButton button span strong {{ color: inherit; }}
 [data-testid="stButtonGroup"], [data-testid="stButtonGroup"] > div {{ flex-wrap: wrap !important; overflow: visible !important; max-width: 100% !important; }}
 .stButton button[kind="primary"] {{ background: {GREEN}; border-color: {GREEN}; }}
 
@@ -59,6 +60,35 @@ CSS = f"""
 .tile .lbl {{ color: #6b6b6b; font-size: 0.78rem; }}
 .tile .v {{ font-weight: 700; font-size: 1.05rem; }}
 
+/* investing-app (fund page) look */
+.g-appbar {{ display: flex; align-items: center; gap: 10px; padding: 4px 0 10px; }}
+.g-back {{ font-size: 1.2rem; color: #444; }}
+.g-logo {{ width: 40px; height: 40px; border-radius: 10px; background: #EAF3E0; color: {GREEN}; font-weight: 700;
+          display: flex; align-items: center; justify-content: center; font-size: .9rem; flex: none; }}
+.g-fund {{ font-weight: 700; font-size: 1.05rem; }}
+.g-tags span {{ display: inline-block; font-size: .72rem; color: #555; background: #F4F4F4; border-radius: 6px;
+               padding: 1px 7px; margin: 3px 4px 0 0; }}
+.g-hold {{ display: flex; justify-content: space-between; align-items: flex-end; border: 1px solid #ececec;
+          border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; }}
+.g-hold .lbl {{ color: #6b6b6b; font-size: .8rem; }}
+.g-hold .big {{ font-size: 1.9rem; font-weight: 700; }}
+.g-hold .mid {{ font-size: 1.1rem; font-weight: 700; text-align: right; }}
+.g-hold-r .lbl {{ text-align: right; }}
+.g-hint {{ font-size: .78rem; color: {GREEN}; margin: 2px 0 4px; }}
+.g-card {{ border: 1px solid #ececec; border-radius: 14px; padding: 12px 16px; margin-top: 10px; }}
+.g-card-h {{ font-weight: 700; font-size: .95rem; margin-bottom: 6px; }}
+.g-pill {{ font-size: .7rem; background: #EAF3E0; color: {GREEN}; border-radius: 10px; padding: 1px 8px; margin-left: 6px; font-weight: 700; }}
+.g-row {{ display: flex; justify-content: space-between; font-size: .88rem; padding: 4px 0; border-bottom: 1px dashed #eee; }}
+.g-row:last-child {{ border-bottom: none; }}
+.g-tx {{ display: flex; justify-content: space-between; align-items: center; font-size: .88rem; padding: 6px 0; }}
+.g-tx .sub {{ color: #6b6b6b; font-size: .76rem; }}
+.g-tx .amt {{ text-align: right; font-weight: 700; }}
+.st-key-txlist {{ border: 1px solid #ececec; border-radius: 14px; padding: 4px 12px; }}
+.st-key-txlist .stButton button {{ border: none; background: #F6FAF2; min-height: 1.8rem; padding: 2px 8px; }}
+.st-key-txlist .stButton button p {{ font-size: .74rem !important; color: #355e12; }}
+.st-key-txlist .stButton button:hover {{ background: #EAF3E0; }}
+.pos {{ color: {GREEN}; }}
+
 /* FinSaar (AI) */
 .fs-label {{ color: {GREEN}; font-weight: 700; font-size: 0.8rem; letter-spacing: .3px; }}
 .fs-card {{ background: #F3F8EE; border-left: 4px solid {GREEN}; border-radius: 10px; padding: 12px 14px;
@@ -70,6 +100,8 @@ CSS = f"""
 .fs-nums {{ width: 100%; font-size: 0.85rem; margin-top: 6px; border-collapse: collapse; }}
 .fs-nums td {{ padding: 3px 0; border-bottom: 1px dashed #d9e4cf; }}
 .fs-nums td:last-child {{ text-align: right; font-weight: 700; }}
+.nudge-up {{ background: #EEF7E6; }}
+.nudge-info {{ background: #F1F6FB; border-left-color: #2f6db5; }}
 .fs-empty {{ border: 1px dashed #cfdcc3; border-radius: 12px; padding: 18px; color: #555; font-size: 0.92rem; }}
 .memory {{ font-size: 0.8rem; color: #444; background: #F7F7F7; border-radius: 8px; padding: 7px 10px; margin: 0.5rem 0; }}
 .task {{ font-size: 0.9rem; }}

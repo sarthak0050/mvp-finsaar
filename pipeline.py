@@ -18,7 +18,7 @@ DECLINE_PATTERNS = [
     r"\b(karna|karni) chahiye\b", r"\bchahiye kya\b", r"\b(band|stop|pause|continue|rok)\s*(kar|kr)?\s*(du|dun|doon|u|un|oon|de|den|dein)\b",
     r"\bwhich fund\b", r"\bbest fund\b", r"\b(kaunsa|konsa|kaun sa|kon sa) fund\b", r"\bswitch\b",
     r"\brecommend", r"\bsuggest", r"\bgood time to\b", r"\bsahi (rahega|hai kya)\b", r"\bworth (continuing|it)\b",
-    r"\b(sell|redeem|withdraw)\b", r"\b(buy|invest) more\b", r"\bnikaal\b", r"\bbech\b",
+    r"\b(sell|redeem|withdraw)\b", r"\b(buy|invest) more\b(?!\s+units)", r"\bnikaal\b", r"\bbech\b",
 ]
 PREDICT_PATTERNS = [
     r"\bwill (it|my|the|this|nav|market|markets|value|sip|fund)\b", r"\brecover", r"\bnext (year|month|week)\b",
@@ -111,8 +111,15 @@ class Result:
         return bool(self.gate and self.gate.passed)
 
 
-def answer(question: str, profile: dict, history: list[str] | None = None) -> Result:
-    s = calc.compute()
+def stage_text(s: calc.SipSummary) -> str:
+    n = s.n_instalments
+    when = "just made the very first instalment" if n == 1 else f"{n} monthly instalments into their first SIP"
+    return f"{when}; value is {s.status_word} the amount invested"
+
+
+def answer(question: str, profile: dict, history: list[str] | None = None, scenario: str | None = None) -> Result:
+    s = calc.compute(scenario=scenario)
+    profile = {**profile, "stage": stage_text(s)}
     facts = calc.facts_block(s)
     nums = calc.allowed_numbers(s)
     lang = profile.get("language", "hinglish")
@@ -163,8 +170,7 @@ def answer(question: str, profile: dict, history: list[str] | None = None) -> Re
 
 def default_profile(key: str = "beginner-hinglish") -> dict:
     level, lang = ("beginner", "hinglish") if key.startswith("beginner") else ("basics", "english")
-    return {"level": level, "language": lang, "understood": [], "simpler": False,
-            "n_instalments": len(calc.load_sip()["instalments"])}
+    return {"level": level, "language": lang, "understood": [], "simpler": False}
 
 
 LIMIT = config.SESSION_QUESTION_LIMIT

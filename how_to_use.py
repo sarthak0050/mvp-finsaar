@@ -17,12 +17,12 @@ def render(next_page):
 
     st.markdown("#### Try it in 4 steps")
     steps = [
-        ("Look at your SIP", "On the left you see the fund, invested amount, current value, and the XIRR, Units "
-                             "and NAV tiles."),
-        ("Ask FinSaar", "Click <b>Explain this</b>, or tap the <b>XIRR, Units or NAV card</b> (e.g. <i>Why so negative?</i>). Then tap a "
-                        "suggested question or type your own, in English or Hinglish."),
-        ("Tell it if it helped", "<b>Yes, clear</b>: it remembers the terms.<br><b>Explain simpler</b>: simpler "
-                                 "words, now and later.<br><b>Ask another</b>: next question."),
+        ("Pick a moment", "Choose a moment in the investor journey: <b>① First instalment</b>, <b>② Month 3 · value "
+                          "up</b> or <b>③ The dip · today</b>. FinSaar shows up differently at each one."),
+        ("Tap any number", "Tap <b>Returns, XIRR, Units or NAV</b> and a <b>FinSaar explains</b> sheet opens right "
+                           "there. In <b>Transactions</b>, tap <b>✦ Why more units?</b> on any instalment."),
+        ("Ask anything", "Use the FinSaar chat on the right: tap a suggested question or type your own, in English "
+                         "or Hinglish. Then <b>Yes, clear</b>, <b>Explain simpler</b> or <b>Ask another</b>."),
         ("Switch the profile", "<b>Beginner · Hinglish</b> or <b>Knows basics · English</b>. Ask again and see "
                                "how the answer changes."),
     ]
@@ -32,8 +32,8 @@ def render(next_page):
                      unsafe_allow_html=True)
 
     st.markdown("#### Mentor task")
-    st.info("Your SIP is down. Find out **whether you've lost money**, and **what your XIRR means**. "
-            "Then ask **whether you should stop**.")
+    st.info("On **③ The dip**: find out **whether you've lost money**, and **what your XIRR means**. "
+            "Then ask **whether you should stop**. Then try **①** and **②** to see FinSaar at the start and in between.")
 
     left, right = st.columns(2)
     with left:
@@ -69,7 +69,7 @@ def render(next_page):
 - All data is **fictional**. Concept prototype, not investment advice, not affiliated with Groww.
 """
     )
-    st.caption("Hinglish mein: Next dabaiye → Explain this → koi bhi sawaal poochiye. Samajh aaye toh Yes, clear, "
+    st.caption("Hinglish mein: Next dabaiye → koi bhi number tap kariye (Returns, XIRR, Units, NAV) → FinSaar samjhayega. Ya chat mein koi bhi sawaal poochiye. Samajh aaye toh Yes, clear, "
                "nahi toh Explain simpler. FinSaar kabhi nahi batayega ki SIP band karein ya chalu rakhein: "
                "faisla aapka hai.")
 
