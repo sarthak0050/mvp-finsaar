@@ -36,7 +36,13 @@ CSS = f"""
 
 .stButton button {{ border-radius: 18px; font-size: 0.85rem; padding: 0.3rem 0.8rem; min-height: 2.1rem; width: 100%; }}
 .stButton button p, .stButton button div {{ white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }}
-.st-key-tilebtn .stButton button p {{ font-size: 0.75rem !important; line-height: 1.15; }}
+.st-key-tilebtn [data-testid="stColumn"] {{ border: 1px solid #e6e6e6; border-radius: 12px; padding: 10px 6px 4px;
+  gap: 0 !important; transition: border-color .15s; }}
+.st-key-tilebtn [data-testid="stColumn"]:hover {{ border-color: {GREEN}; }}
+.st-key-tilebtn .tile {{ border: none; padding: 0; }}
+.st-key-tilebtn .stButton {{ display: flex; justify-content: center; }}
+.st-key-tilebtn .stButton button {{ width: auto; min-height: 1.6rem; padding: 0 6px; color: {GREEN}; }}
+.st-key-tilebtn .stButton button p {{ font-size: 0.8rem !important; font-weight: 700; color: {GREEN}; }}
 [data-testid="stButtonGroup"], [data-testid="stButtonGroup"] > div {{ flex-wrap: wrap !important; overflow: visible !important; max-width: 100% !important; }}
 .stButton button[kind="primary"] {{ background: {GREEN}; border-color: {GREEN}; }}
 

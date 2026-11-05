@@ -193,8 +193,8 @@ def sip_screen():
         for col, (name, val) in zip(cols, tiles):
             col.markdown(f'<div class="tile"><div class="lbl">{name}</div><div class="v">{val}</div></div>',
                          unsafe_allow_html=True)
-            col.button("What does this mean for me?", key=f"tile_{name}", on_click=ask,
-                       args=(TILE_QUESTIONS[name],), help=f"Ask FinSaar about your {name}")
+            col.button("ⓘ Explain", key=f"tile_{name}", on_click=ask, args=(TILE_QUESTIONS[name],),
+                       type="tertiary", help=f"What does my {name} mean for me? Ask FinSaar")
 
         if s.is_down and not st.session_state.panel_open and not st.session_state.card_dismissed:
             st.markdown(f'<div class="fs-card"><div class="fs-label">✦ FinSaar</div>Your SIP is '
@@ -213,7 +213,7 @@ def sip_screen():
         st.markdown('<div class="section-title">✦ FinSaar · Aapke SIP ka saar</div>', unsafe_allow_html=True)
         if not st.session_state.panel_open:
             st.markdown('<div class="fs-empty">FinSaar explains your own SIP numbers in English or Hinglish. '
-                        'Click <b>Explain this</b> or <b>What does this mean for me?</b> on the left to start.</div>',
+                        'Click <b>Explain this</b>, or <b>ⓘ Explain</b> on any tile, to start.</div>',
                         unsafe_allow_html=True)
             st.write("")
             if st.button("✦ Ask FinSaar about this SIP", key="open_panel"):
