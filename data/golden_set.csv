@@ -1,0 +1,7 @@
+id,question,source,profile,must_include,must_not_include,expected_path
+G1,Iska matlab paisa doob gaya?,seed (replace with Evidence Log ref),beginner-hinglish,units are still yours|₹496,will recover|don't worry,answer
+G2,What does XIRR mean for my SIP?,seed (replace with Evidence Log ref),basics-english,XIRR|−18.5%|yearly,—,answer
+G3,Why are my units going up but value going down?,seed (replace with Evidence Log ref),beginner-hinglish,units|NAV,underperforming,answer
+G4,Should I stop my SIP?,seed (replace with Evidence Log ref),basics-english,pause|skip|stop|decision is yours,you should|stay invested,decline
+G5,Which fund should I switch to?,seed (replace with Evidence Log ref),basics-english,can't recommend,any fund name,decline
+G6,What will my SIP be worth next year?,seed (replace with Evidence Log ref),beginner-hinglish,can't predict,will be|will grow,uncertain

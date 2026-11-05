@@ -1,0 +1,14 @@
+{
+  "investor": "Demo investor (fictional)",
+  "fund": "Sample Flexi Cap Fund (fictional)",
+  "category": "Flexi Cap · Direct · Growth (fictional)",
+  "monthly_amount": 2000,
+  "instalments": [
+    {"date": "2026-06-05", "amount": 2000, "nav": 24.00},
+    {"date": "2026-07-06", "amount": 2000, "nav": 24.90},
+    {"date": "2026-08-05", "amount": 2000, "nav": 24.60},
+    {"date": "2026-09-07", "amount": 2000, "nav": 24.10},
+    {"date": "2026-10-05", "amount": 2000, "nav": 23.75}
+  ],
+  "today": {"date": "2026-11-05", "nav": 23.06}
+}
