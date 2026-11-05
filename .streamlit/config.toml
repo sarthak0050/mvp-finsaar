@@ -8,3 +8,7 @@ backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#F3F8EE"
 textColor = "#1d1d1f"
 font = "sans serif"
+
+[client]
+# never show tracebacks or error details to viewers (errors still go to the server logs)
+showErrorDetails = "none"

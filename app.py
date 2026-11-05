@@ -234,6 +234,19 @@ def _dialog_simpler():
 
 @st.dialog("✦ FinSaar explains", width="large")
 def explain_dialog(question: str):
+    # The sheet re-runs on its own (without the page), e.g. after "Explain simpler". If the session was reset
+    # meanwhile (app redeployed, tab idle), rebuild state first and never show an error to the viewer.
+    init_state()
+    try:
+        _explain_dialog_body(question)
+    except Exception:
+        s = calc.compute(scenario=st.session_state.get("scenario", DEFAULT_SCENARIO))
+        st.markdown('<div class="fs-card"><div class="fs-label">✦ FinSaar</div>Something went wrong while '
+                    'explaining this, so here are your plain numbers. Please close this and tap the number again.'
+                    f'{numbers_table(s)}</div>', unsafe_allow_html=True)
+
+
+def _explain_dialog_body(question: str):
     s = calc.compute(scenario=st.session_state.scenario)
     ck = f"{s.scenario}|{question}|{st.session_state.profile_label}|{st.session_state.simpler}"
     kh = hashlib.md5(ck.encode()).hexdigest()[:10]
