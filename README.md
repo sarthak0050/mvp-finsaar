@@ -45,7 +45,8 @@ The phrase lists live at the top of `gate.py`; add to them as you find new cases
 
 | File | What it does |
 |---|---|
-| `app.py` | UI: SIP screen, FinSaar panel, profile switch, mentor task, session learning |
+| `app.py` | UI: SIP screen, FinSaar panel, profile switch, mentor task, session learning, top tab bar |
+| `how_to_use.py` | "How to use" page for investors and mentors |
 | `calc.py` | all numbers (units, average NAV, value, gain/loss, XIRR via bisection) |
 | `rag.py` | parses `knowledge.md`, embeddings + cosine, keyword fallback (cached) |
 | `llm.py` | system prompt, Gemini JSON call, model fallback, LLM judge for evals |

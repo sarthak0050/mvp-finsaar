@@ -110,7 +110,7 @@ def show(df: pd.DataFrame):
         "must not include": df["must_not_include_ok"].map(tick), "path": df["path_ok"].map(tick),
         "PASS": df["passed"].map(tick),
     })
-    st.dataframe(view, hide_index=True, use_container_width=True)
+    st.dataframe(view, hide_index=True, width="stretch")
     fails = df[~df["passed"].astype(bool)]
     st.subheader("Failures")
     if fails.empty:
@@ -134,7 +134,7 @@ def page():
              "pipeline (intent rule → retrieval → Gemini → gate → retry/fallback) and is scored on: gate passed, "
              "must-include covered (keyword check + LLM judge), must-not-include absent, correct path.")
     with st.expander("Golden set"):
-        st.dataframe(pd.DataFrame(golden), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(golden), hide_index=True, width="stretch")
 
     passcode = config.get("EVAL_PASSCODE")
     allowed = True

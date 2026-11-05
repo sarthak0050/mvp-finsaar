@@ -163,6 +163,7 @@ def sip_screen():
         st.markdown('<div class="task">Your SIP is down. Find out <b>whether you\'ve lost money</b>, and '
                     '<b>what your XIRR means</b>. Then ask <b>whether you should stop</b>.</div>',
                     unsafe_allow_html=True)
+        st.caption("New here? Open the **How to use** tab above.")
 
     st.segmented_control("Investor profile (switch to see personalisation)", list(PROFILES),
                          key="profile_label", selection_mode="single")
@@ -261,6 +262,12 @@ def sip_screen():
 
 # ---------- navigation ----------
 ui_style.apply()
-pg = st.navigation([st.Page(sip_screen, title="My SIP", icon="🌱", default=True),
-                    st.Page("eval_page.py", title="Eval results", icon="✅")])
+PAGES = [st.Page(sip_screen, title="My SIP", icon="🌱", default=True),
+         st.Page("how_to_use.py", title="How to use", icon="📖"),
+         st.Page("eval_page.py", title="Eval results", icon="✅")]
+pg = st.navigation(PAGES)
+# tab bar on every page (the sidebar is hard to reach on phones)
+nav = st.container(key="topnav")
+for col, page in zip(nav.columns(3), PAGES):
+    col.page_link(page, label=page.title, icon=page.icon)
 pg.run()

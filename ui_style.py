@@ -51,6 +51,12 @@ CSS = f"""
 .fs-nums td:last-child {{ text-align: right; font-weight: 700; }}
 .memory {{ font-size: 0.75rem; color: #444; background: #F7F7F7; border-radius: 8px; padding: 6px 9px; margin: 0.4rem 0; }}
 .task {{ font-size: 0.82rem; }}
+.block-container h3 {{ font-size: 1.25rem !important; padding: 0.3rem 0 0.2rem !important; }}
+.block-container h4 {{ font-size: 1rem !important; padding: 0.6rem 0 0.1rem !important; color: #3F7D0A; }}
+.block-container .stMarkdown p, .block-container .stMarkdown li {{ font-size: 0.88rem; }}
+.st-key-topnav {{ border-bottom: 1px solid #e6e6e6; padding-bottom: 4px; margin-bottom: 0.4rem; }}
+.st-key-topnav [data-testid="stPageLink"] a {{ justify-content: center; padding: 4px 2px; }}
+.st-key-topnav [data-testid="stPageLink"] p {{ font-size: 0.74rem !important; white-space: nowrap; }}
 </style>
 """
 
