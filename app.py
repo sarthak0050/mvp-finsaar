@@ -112,9 +112,13 @@ def run_question(q: str, s: calc.SipSummary) -> pipeline.Result:
                                ["Your SIP data"], show_numbers=True, error=type(e).__name__)
 
 
+def on_profile():
+    st.session_state.profile_label = st.session_state.w_profile or st.session_state.profile_label
+
+
 def on_scenario():
-    if not st.session_state.scenario:
-        st.session_state.scenario = DEFAULT_SCENARIO
+    st.session_state.scenario = st.session_state.w_scenario or st.session_state.scenario
+    st.session_state.banner_dismissed = False
     st.session_state.turns = []
     st.session_state.feedback_done = set()
     st.session_state.card_dismissed = False
@@ -260,33 +264,125 @@ def memory_line() -> str:
     return "FinSaar remembers: " + (" · ".join(bits) if bits else "nothing yet")
 
 
-# ---------- the MVP page ----------
+# ---------- mentor controls (outside the app) ----------
+
+def controls():
+    """Slim bar above the app: how to use, eval, journey moment and investor profile."""
+    init_state()
+    bar = st.container(key="protobar")
+    c4, c5, c1, c2, c3 = bar.columns([2.4, 2.4, 1.1, 0.8, 1.1], vertical_alignment="bottom")
+    # widget keys are copies of the real state, so the choice survives page changes
+    st.session_state.w_scenario = st.session_state.scenario
+    st.session_state.w_profile = st.session_state.profile_label
+    c4.selectbox("Journey moment", list(SCENARIOS), format_func=SCENARIOS.get, key="w_scenario",
+                 on_change=on_scenario)
+    c5.selectbox("Investor profile", list(PROFILES), key="w_profile", on_change=on_profile)
+    c1.page_link(HOW_PAGE, label="Guide", icon="📖")
+    c2.page_link(EVAL_PAGE, label="Eval", icon="✅")
+    with c3.popover("🧪 Task", width="stretch"):
+        st.markdown("On **③ The dip**: find out **whether you've lost money** and **what your XIRR means**. "
+                    "Then ask **whether you should stop**. Then try **①** and **②** to see FinSaar at the start "
+                    "and in between.")
+
+
+# ---------- Investments dashboard (entry point) ----------
+
+DASH_COPY = {
+    "start": ("Your first SIP instalment is done.",
+              "FinSaar can show you what your {amt} bought, in plain words."),
+    "up": ("Your SIP is {gain} above what you invested.",
+           "Curious what is behind it? FinSaar explains your own numbers, in English or Hinglish."),
+    "down": ("Your SIP is {gain} below what you invested.",
+             "Understand what it means for you, in plain words. No jargon, no advice."),
+}
+
+
+def dashboard():
+    init_state()
+    controls()
+    ui_style.host_shell(sub="Dashboard")
+    s = calc.compute(scenario=st.session_state.scenario)
+    m = moment(s)
+
+    main, side = st.columns([7, 4], gap="large")
+    with main:
+        if s.is_down or s.is_up:
+            ret = f"{'−' if s.is_down else '+'}{calc.inr(s.gain)} ({calc.signed_pct(s.gain_pct, 2)})"
+        else:
+            ret = "₹0 (0.00%)"
+        tone = "neg" if s.is_down else "pos" if s.is_up else ""
+        xirr = calc.signed_pct(s.xirr_pct, 1) if s.xirr_pct is not None else "—"
+        st.markdown(
+            f'<div class="d-sum"><div class="lbl">Current value</div><div class="big">{calc.inr(s.current_value)}</div>'
+            f'<div class="grid"><div><span class="lbl">Invested</span><b>{calc.inr(s.invested)}</b></div>'
+            f'<div><span class="lbl">Total returns</span><b class="{tone}">{ret}</b></div>'
+            f'<div><span class="lbl">XIRR</span><b class="{tone}">{xirr}</b></div></div></div>',
+            unsafe_allow_html=True)
+
+        if not st.session_state.get("banner_dismissed"):
+            key = "start" if s.scenario == "start" else "up" if s.is_up else "down"
+            head, body = DASH_COPY[key]
+            fmt = {"gain": calc.inr(s.gain), "amt": calc.inr(s.instalments[0].amount)}
+            st.markdown(f'<div class="d-new"><span class="badge">NEW FEATURE</span><span class="name">✦ FinSaar</span>'
+                        f'<div class="head">{head.format(**fmt)}</div><div class="body">{body.format(**fmt)}</div></div>',
+                        unsafe_allow_html=True)
+            c1, c2, _ = st.container(key="nudge").columns([1.3, 1, 2])
+            if c1.button("Understand my SIP →", type="primary", key="dash_go"):
+                st.session_state.card_dismissed = True
+                ask(m["nudge_q"])
+                st.switch_page(MVP_PAGE)
+            if c2.button("Not now", key="dash_later"):
+                st.session_state.banner_dismissed = True
+                st.rerun()
+
+        st.markdown('<div class="d-sec">Holdings (1)</div>', unsafe_allow_html=True)
+        label = (f"**{s.fund}**  \nFlexi Cap · Direct · Growth · SIP {calc.inr(s.monthly_amount)}/month"
+                 f"  \nCurrent {calc.inr(s.current_value)} · Returns {ret}")
+        with st.container(key="holdrow"):
+            if st.button(label, key="open_fund", width="stretch", help="Open fund details"):
+                st.switch_page(MVP_PAGE)
+
+        st.markdown('<div class="d-sec">Popular funds</div>', unsafe_allow_html=True)
+        cols = st.columns(3)
+        for col, (name, cat) in zip(cols, [("Sample Large Cap Fund (fictional)", "Equity · Large Cap"),
+                                           ("Sample Index Fund (fictional)", "Equity · Index"),
+                                           ("Sample Liquid Fund (fictional)", "Debt · Liquid")]):
+            col.markdown(f'<div class="d-dead" {ui_style.DEAD}><b>{name}</b>{cat}</div>', unsafe_allow_html=True)
+
+    with side:
+        nxt = calc.fmt_date(s.next_instalment) if s.next_instalment else "—"
+        st.markdown(
+            f'<div class="g-card" style="margin-top:0"><div class="g-card-h">Your SIPs <span class="g-pill">1 active</span></div>'
+            f'<div class="g-row"><span>{html.escape(s.fund)}</span></div>'
+            f'<div class="g-row"><span>Monthly</span><b>{calc.inr(s.monthly_amount)}</b></div>'
+            f'<div class="g-row"><span>Next instalment</span><b>{nxt}</b></div></div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="g-card"><div class="g-card-h">Quick actions</div>'
+            f'<div class="d-dead" {ui_style.DEAD}><b>Start a new SIP</b>Not part of this prototype</div>'
+            f'<div class="d-dead" style="margin-top:8px" {ui_style.DEAD}><b>Import funds</b>Not part of this prototype</div>'
+            f'</div>', unsafe_allow_html=True)
+
+
+# ---------- the fund page (FinSaar lives here) ----------
 
 def sip_screen():
     init_state()
+    controls()
+    ui_style.host_shell(sub=None)
     s = calc.compute(scenario=st.session_state.scenario)
     m = moment(s)
     to_explain = None
-
-    top_l, top_r = st.columns([3, 2], vertical_alignment="bottom")
-    with top_l:
-        st.segmented_control("Investor journey (see FinSaar at each moment)", list(SCENARIOS),
-                             format_func=SCENARIOS.get, key="scenario", on_change=on_scenario)
-    with top_r:
-        st.segmented_control("Investor profile", list(PROFILES), key="profile_label")
-    if not st.session_state.profile_label:
-        st.session_state.profile_label = "Beginner · Hinglish"
-    with st.expander("🧪 Mentor task", expanded=False):
-        st.markdown('<div class="task">On <b>③ The dip</b>: find out <b>whether you\'ve lost money</b> and '
-                    '<b>what your XIRR means</b>. Then ask <b>whether you should stop</b>. '
-                    'Also try ① and ② to see FinSaar at the start and in between.</div>', unsafe_allow_html=True)
 
     left, right = st.columns([11, 10], gap="large")
 
     # ---------------- left: the investing app ----------------
     with left:
-        st.markdown(
-            f'<div class="g-appbar"><span class="g-back">←</span><span class="g-logo">SF</span>'
+        b1, b2 = st.columns([1, 14], vertical_alignment="center")
+        with b1.container(key="backbtn"):
+            if st.button("←", key="back_dash", help="Back to your investments"):
+                st.switch_page(DASH_PAGE)
+        b2.markdown(
+            f'<div class="g-appbar"><span class="g-logo">SF</span>'
             f'<div><div class="g-fund">{html.escape(s.fund)}</div>'
             f'<div class="g-tags"><span>Equity</span><span>Flexi Cap</span><span>Direct · Growth</span></div></div></div>',
             unsafe_allow_html=True)
@@ -314,7 +410,7 @@ def sip_screen():
                 to_explain = m["tiles"][name]
 
         # FinSaar nudge for this moment
-        if not st.session_state.card_dismissed:
+        if not st.session_state.card_dismissed and not st.session_state.turns:
             st.markdown(f'<div class="fs-card nudge-{m["tone"]}"><div class="fs-label">✦ FinSaar</div>'
                         f'{m["icon"]} {m["nudge"]}</div>', unsafe_allow_html=True)
             c1, c2, _ = st.container(key="nudge").columns([1, 1, 1])
@@ -399,17 +495,27 @@ def sip_screen():
         explain_dialog(to_explain)
 
 
-# ---------- navigation (no sidebar: How to use → FinSaar MVP, plus Eval) ----------
+# ---------- navigation: How to use → Investments dashboard → fund page (FinSaar), plus Eval ----------
 import how_to_use  # noqa: E402
 
-MVP_PAGE = st.Page(sip_screen, title="② FinSaar MVP", url_path="mvp")
-HOW_PAGE = st.Page(lambda: how_to_use.render(MVP_PAGE), title="① How to use", url_path="how-to-use", default=True)
-EVAL_PAGE = st.Page("eval_page.py", title="Eval results", url_path="eval")
-PAGES = [HOW_PAGE, MVP_PAGE, EVAL_PAGE]
+
+def how_page():
+    ui_style.brand_header()
+    how_to_use.render(DASH_PAGE)
+
+
+def eval_wrapper():
+    ui_style.brand_header()
+    st.page_link(DASH_PAGE, label="← Back to the app", icon="🌱")
+    import eval_page
+    eval_page.page()
+
+
+HOW_PAGE = st.Page(how_page, title="How to use", url_path="how-to-use", default=True)
+DASH_PAGE = st.Page(dashboard, title="Investments", url_path="investments")
+MVP_PAGE = st.Page(sip_screen, title="Fund · FinSaar", url_path="fund")
+EVAL_PAGE = st.Page(eval_wrapper, title="Eval results", url_path="eval")
 
 ui_style.apply()
-pg = st.navigation(PAGES, position="hidden")
-nav = st.container(key="topnav")
-for col, page in zip(nav.columns(len(PAGES)), PAGES):
-    col.page_link(page, label=page.title)
+pg = st.navigation([HOW_PAGE, DASH_PAGE, MVP_PAGE, EVAL_PAGE], position="hidden")
 pg.run()

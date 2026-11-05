@@ -170,4 +170,5 @@ def page():
         st.info("No results yet. Press **Run golden-set eval**.")
 
 
-page()
+if __name__ == "__main__":
+    page()

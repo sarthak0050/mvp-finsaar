@@ -17,14 +17,15 @@ def render(next_page):
 
     st.markdown("#### Try it in 4 steps")
     steps = [
-        ("Pick a moment", "Choose a moment in the investor journey: <b>① First instalment</b>, <b>② Month 3 · value "
-                          "up</b> or <b>③ The dip · today</b>. FinSaar shows up differently at each one."),
-        ("Tap any number", "Tap <b>Returns, XIRR, Units or NAV</b> and a <b>FinSaar explains</b> sheet opens right "
+        ("Start on Investments", "You land on a Groww-style <b>Investments</b> dashboard. The <b>NEW FEATURE · "
+                                 "FinSaar</b> card offers to explain your SIP. Click <b>Understand my SIP →</b>."),
+        ("Tap any number", "On the fund page, tap <b>Returns, XIRR, Units or NAV</b> and a <b>FinSaar explains</b> sheet opens right "
                            "there. In <b>Transactions</b>, tap <b>✦ Why more units?</b> on any instalment."),
         ("Ask anything", "Use the FinSaar chat on the right: tap a suggested question or type your own, in English "
                          "or Hinglish. Then <b>Yes, clear</b>, <b>Explain simpler</b> or <b>Ask another</b>."),
-        ("Switch the profile", "<b>Beginner · Hinglish</b> or <b>Knows basics · English</b>. Ask again and see "
-                               "how the answer changes."),
+        ("Try every moment", "In the grey mentor bar on top, pick the <b>journey moment</b> (① first instalment, "
+                             "② month 3, ③ the dip) and the <b>profile</b> (Beginner · Hinglish / Knows basics · "
+                             "English) and see FinSaar change."),
     ]
     cols = st.columns(4)
     for n, (col, (title, body)) in enumerate(zip(cols, steps), 1):
@@ -66,7 +67,8 @@ def render(next_page):
   clears it. Learning across sessions is planned.
 - **{config.SESSION_QUESTION_LIMIT} questions per session**, to keep the demo free for everyone. Nothing you type is stored.
 - **Eval results** (top bar) shows how FinSaar scored on a fixed set of real investor questions.
-- All data is **fictional**. Concept prototype, not investment advice, not affiliated with Groww.
+- Only **FinSaar** and what it needs work. Other Groww-style tabs and buttons are for look only.
+- All data is **fictional**. FinSaar is a concept feature for Groww; this prototype is not investment advice and not affiliated with Groww.
 """
     )
     st.caption("Hinglish mein: Next dabaiye → koi bhi number tap kariye (Returns, XIRR, Units, NAV) → FinSaar samjhayega. Ya chat mein koi bhi sawaal poochiye. Samajh aaye toh Yes, clear, "
@@ -75,5 +77,5 @@ def render(next_page):
 
     st.write("")
     c1, _ = st.columns([1, 2])
-    if c1.button("Next: Try FinSaar →", type="primary", key="next_btn"):
+    if c1.button("Next: Open the app →", type="primary", key="next_btn"):
         st.switch_page(next_page)

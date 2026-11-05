@@ -45,7 +45,7 @@
     },
     {
       "id": "midway",
-      "label": "② Month 3 · value up",
+      "label": "② Month 3",
       "date": "2026-08-20",
       "nav": 25.1,
       "instalments": 3,
@@ -53,7 +53,7 @@
     },
     {
       "id": "dip",
-      "label": "③ The dip · today",
+      "label": "③ The dip",
       "date": "2026-11-05",
       "nav": 23.06,
       "instalments": 5,
