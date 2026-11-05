@@ -14,11 +14,11 @@ CSS = f"""
 [data-testid="stHeader"] * {{ pointer-events: auto; }}
 .block-container {{
   max-width: 410px !important; padding: 2.2rem 1rem 3rem !important; background: #FFFFFF;
-  margin-top: 0.5rem; min-height: 100vh;
+  margin-top: 0.5rem; min-height: 100vh; height: auto !important; flex-shrink: 0 !important;
 }}
 @media (min-width: 520px) {{
   .block-container {{ border-radius: 28px; box-shadow: 0 8px 30px rgba(0,0,0,.12); margin-top: 2.2rem;
-                      min-height: 780px; border: 8px solid #1d1d1f; }}
+                      min-height: 780px; border: 8px solid #1d1d1f; margin-bottom: 2.2rem; }}
 }}
 /* keep columns side by side even on narrow phones */
 [data-testid="stHorizontalBlock"] {{ flex-wrap: nowrap !important; gap: 0.4rem !important; }}
