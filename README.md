@@ -45,8 +45,8 @@ The phrase lists live at the top of `gate.py`; add to them as you find new cases
 
 | File | What it does |
 |---|---|
-| `app.py` | UI: SIP screen, FinSaar panel, profile switch, mentor task, session learning, top tab bar |
-| `how_to_use.py` | "How to use" page for investors and mentors |
+| `app.py` | UI: top bar (How to use → FinSaar MVP → Eval results, no sidebar), SIP on the left, FinSaar panel on the right, profile switch, mentor task, session learning |
+| `how_to_use.py` | landing page: how to use, with a Next button into the MVP |
 | `calc.py` | all numbers (units, average NAV, value, gain/loss, XIRR via bisection) |
 | `rag.py` | parses `knowledge.md`, embeddings + cosine, keyword fallback (cached) |
 | `llm.py` | system prompt, Gemini JSON call, model fallback, LLM judge for evals |
@@ -86,7 +86,7 @@ To change the model later, edit `GEMINI_MODEL` in the app's Secrets. No code cha
 
 ## Golden-set evaluation
 
-Open **Eval results** (sidebar, or the link at the bottom of the SIP screen), enter the passcode, and press
+Open **Eval results** (top bar), enter the passcode, and press
 **Run golden-set eval**. Each row is scored on:
 
 * **gate passed**: the final answer shown passed every gate check

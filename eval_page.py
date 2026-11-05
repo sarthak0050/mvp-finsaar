@@ -127,8 +127,7 @@ def show(df: pd.DataFrame):
 
 
 def page():
-    st.markdown("<style>.block-container{max-width:1100px !important;}</style>", unsafe_allow_html=True)
-    st.title("Golden-set evaluation")
+    st.markdown("### Golden-set evaluation")
     golden = load_golden()
     st.write(f"{len(golden)} golden questions from `data/golden_set.csv`. Each runs through the full FinSaar "
              "pipeline (intent rule → retrieval → Gemini → gate → retry/fallback) and is scored on: gate passed, "
