@@ -1,4 +1,4 @@
-"""'How to use' page: the landing page. Ends with a Next button into the MVP."""
+"""Guide page: the problem, how FinSaar works inside the app, and where AI adds value. Ends with a Next button."""
 import streamlit as st
 
 import calc
@@ -8,72 +8,74 @@ import config
 def render(next_page):
     s = calc.compute()
 
-    st.markdown("### How to use FinSaar")
+    st.markdown("### Your SIP speaks in numbers; FinSaar helps you make sense of them in your terms.")
     st.markdown(
-        f"FinSaar explains **your own SIP numbers** in simple English or Hinglish when your SIP value falls below "
-        f"what you invested. In this demo, a fictional SIP of {calc.inr(s.monthly_amount)}/month is "
-        f"**{calc.inr(s.gain)} below** the amount invested. You can ask FinSaar anything about it."
+        "First-time MF investors judge their SIP only by profit or loss. Other financial parameters (XIRR, units, "
+        "NAV, etc.) mean little to them, as they lack the knowledge to interpret them and assess performance. When "
+        "returns drop, they look outside the app for answers. This gap and uncertainty can make them question "
+        "continuing, increasing the risk of pausing or stopping within 12 months."
     )
+    st.caption("FinSaar (\"saar\" = essence · Aapke SIP ka saar) is a concept feature inside a Groww-style app. "
+               "It is not another chatbot: it sits on the investor's own SIP, at a moment they are already unsure, "
+               "and explains their own numbers. It builds understanding; it never nudges anyone to stay.")
 
     st.markdown("#### Try it in 4 steps")
     steps = [
-        ("Start on Investments", "You land on a Groww-style <b>Investments</b> dashboard. The <b>NEW FEATURE · "
-                                 "FinSaar</b> card offers to explain your SIP. Click <b>Understand my SIP →</b>."),
-        ("Tap any number", "On the fund page, tap <b>Returns, XIRR, Units or NAV</b> and a <b>FinSaar explains</b> sheet opens right "
-                           "there. In <b>Transactions</b>, tap <b>✦ Why more units?</b> on any instalment."),
-        ("Ask anything", "Use the FinSaar chat on the right: tap a suggested question or type your own, in English "
-                         "or Hinglish. Then <b>Yes, clear</b>, <b>Explain simpler</b> or <b>Ask another</b>."),
-        ("Try every moment", "In the grey mentor bar on top, pick the <b>journey moment</b> (① first instalment, "
-                             "② month 3, ③ the dip) and the <b>profile</b> (Beginner · Hinglish / Knows basics · "
-                             "English) and see FinSaar change."),
+        ("Open the app", f"Press <b>Next</b>. The phone shows the investor's SIP, {calc.inr(s.gain)} below what "
+                         "they invested, with a <b>FinSaar card</b>. Tap <b>Explain this</b>."),
+        ("Tap a number", "Open the fund and tap <b>XIRR, Units or NAV</b>. A sheet shows what it is, your number, "
+                         "and what it means for you now."),
+        ("Ask anything", "In the FinSaar chat, ask in English or Hinglish. Then <b>Yes, clear</b>, <b>Explain "
+                         "simpler</b> or <b>Ask another</b>. Try <i>Should I stop?</i>"),
+        ("Switch and come back", "On the left, switch the <b>demo investor</b>, or press <b>Simulate next visit</b> "
+                                 "to see <i>Last time: NAV. XIRR next?</i>"),
     ]
     cols = st.columns(4)
     for n, (col, (title, body)) in enumerate(zip(cols, steps), 1):
         col.markdown(f'<div class="step"><span class="n">{n}</span><b class="t">{title}</b><br>{body}</div>',
                      unsafe_allow_html=True)
 
-    st.markdown("#### Mentor task")
-    st.info("On **③ The dip**: find out **whether you've lost money**, and **what your XIRR means**. "
-            "Then ask **whether you should stop**. Then try **①** and **②** to see FinSaar at the start and in between.")
+    st.info("**Try this task:** Your SIP is down. Find out whether you've lost money and what your XIRR means. "
+            "Then ask whether you should stop.")
 
-    left, right = st.columns(2)
-    with left:
-        st.markdown("#### Reading an answer")
-        st.markdown(
-            """
-- AI answers sit in a **green card labelled "✦ FinSaar · AI"**. Everything else is normal app content.
-- **✓ Checks passed**: the answer passed every quality check before you saw it (numbers match your SIP data,
-  no advice, no predictions, no fear or urgency, sources listed, short enough).
-- **How this answer was checked** shows each check, the sources and the numbers used.
-- **⚠ Safe fallback shown**: the AI answer did not pass, or the AI was busy, so FinSaar shows your plain
-  numbers and the official source instead of guessing.
-"""
-        )
-    with right:
-        st.markdown("#### What FinSaar will not do")
-        st.markdown(
-            """
-- **No advice.** It won't tell you to continue, pause, stop, switch or buy, or recommend any fund.
-  Ask *"Should I stop?"* and it explains each option, then says **the decision is yours**.
-- **No predictions.** It won't say whether the value will recover or what it will be worth later.
-- **No made-up numbers.** The app calculates every number; the AI only explains them.
-"""
-        )
-
-    st.markdown("#### Good to know")
+    st.markdown("#### Where FinSaar shows up (entry points)")
     st.markdown(
-        f"""
-- **Memory lasts for this session only.** *"FinSaar remembers: …"* shows what it has learned; **Reset memory**
-  clears it. Learning across sessions is planned.
-- **{config.SESSION_QUESTION_LIMIT} questions per session**, to keep the demo free for everyone. Nothing you type is stored.
-- **Eval results** (top bar) shows how FinSaar scored on a fixed set of real investor questions.
-- Only **FinSaar** and what it needs work. Other Groww-style tabs and buttons are for look only.
-- All data is **fictional**. FinSaar is a concept feature for Groww; this prototype is not investment advice and not affiliated with Groww.
-"""
+        "1. **When value falls below invested:** a card on the SIP screen. Dismissible; never a pop-up or push alert.\n"
+        "2. **On a number:** tap XIRR, NAV or units → *What does this mean for me?*\n"
+        "3. **When you come back:** *Last time: NAV. XIRR next?* (in-app only).\n"
+        "4. **Then any question,** in English or Hinglish. A dip note gives one fixed explanation; FinSaar starts "
+        "with yours."
     )
-    st.caption("Hinglish mein: Next dabaiye → koi bhi number tap kariye (Returns, XIRR, Units, NAV) → FinSaar samjhayega. Ya chat mein koi bhi sawaal poochiye. Samajh aaye toh Yes, clear, "
-               "nahi toh Explain simpler. FinSaar kabhi nahi batayega ki SIP band karein ya chalu rakhein: "
-               "faisla aapka hai.")
+
+    st.markdown("#### Where AI adds value")
+    a, b = st.columns(2)
+    with a:
+        st.markdown("**Code calculates**")
+        st.markdown("- Invested, value, units, NAV history, XIRR\n- When the FinSaar card appears")
+        st.markdown("**AI handles**")
+        st.markdown("- Messy or Hinglish questions\n- Picking the relevant SIP data and definitions\n"
+                    "- Explaining the numbers together\n- Adapting to level and language\n- Follow-ups")
+    with b:
+        st.markdown("**AI does not**")
+        st.markdown("- Recommend funds or stocks\n- Predict returns or say a fall will recover\n"
+                    "- Say continue, pause or stop\n- Use fear, FOMO or urgency\n- Invent data")
+        st.markdown("**What a non-AI version misses**")
+        st.markdown("A fixed dip note or FAQ gives everyone the same text. It can't take questions in their own "
+                    "words or Hinglish, can't answer follow-ups, can't change depth, and can't remember what they "
+                    "understood, so they still Google.")
+
+    st.markdown("#### Every answer is checked")
+    st.markdown("- **✓ Checked** means the answer passed every check before you saw it: numbers match your data, "
+                "no advice, no prediction, no fear or urgency, sources listed, short enough.\n"
+                "- Otherwise FinSaar retries once, then shows a **safe fallback** (plain numbers and the official "
+                "source, or the neutral options for decision questions).\n"
+                "- Open **How this answer was checked** under any answer, or the **Eval results** page for the "
+                "golden-set score.")
+
+    st.caption(f"Memory lasts for this session (cross-session learning is planned) · {config.SESSION_QUESTION_LIMIT} "
+               "questions per session · nothing you type is stored · all data is fictional · concept prototype, not "
+               "investment advice, not affiliated with Groww. Journey moments ① and ② in the controls are for "
+               "testing only.")
 
     st.write("")
     c1, _ = st.columns([1, 2])

@@ -60,6 +60,79 @@ CSS = f"""
 .tile .lbl {{ color: #6b6b6b; font-size: 0.78rem; }}
 .tile .v {{ font-weight: 700; font-size: 1.05rem; }}
 
+/* ---------- phone prototype ---------- */
+.st-key-phone {{ background: #fff; }}
+@media (min-width: 641px) {{
+  [data-testid="stLayoutWrapper"]:has(> .st-key-phone) {{ border: 11px solid #16181a !important; border-radius: 42px !important;
+     box-shadow: 0 18px 50px rgba(0,0,0,.22); overflow: hidden; max-width: 414px; margin: 0 auto; }}
+  .st-key-phone {{ border: none !important; border-radius: 30px; padding: 6px 10px 0 !important; scrollbar-width: thin; }}
+}}
+@media (max-width: 640px) {{
+  .st-key-phone {{ height: auto !important; max-height: none !important; overflow: visible !important; border: none !important; padding: 0 !important; }}
+  [data-testid="stLayoutWrapper"]:has(> .st-key-phone) {{ height: auto !important; border: none !important; }}
+}}
+.st-key-phone {{ max-width: 392px; margin: 0 auto; }}
+.ph-status {{ display: flex; justify-content: space-between; font-size: .72rem; color: #222; padding: 2px 4px 6px; }}
+.ph-head {{ display: flex; justify-content: space-between; align-items: center; padding: 2px 0 6px; }}
+.wordmark {{ display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 1.1rem; }}
+.wordmark .h-mark {{ width: 24px; height: 24px; }}
+.ph-icons {{ font-size: .95rem; letter-spacing: 6px; }}
+.ph-tabs {{ display: flex; gap: 16px; font-size: .85rem; color: #44475b; border-bottom: 1px solid #eee; }}
+.ph-tabs span {{ padding-bottom: 6px; }}
+.ph-tabs span.on {{ color: #1d1d1f; font-weight: 700; border-bottom: 2px solid {HOST}; }}
+.ph-title {{ font-weight: 700; font-size: .98rem; line-height: 1.25; }}
+.ph-sub {{ font-size: .72rem; color: #6b6b6b; }}
+.ph-actions {{ display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 2px; }}
+.ph-actions span {{ border: 1px solid #e3e3e3; border-radius: 8px; padding: 5px 9px; font-size: .74rem; color: #555; cursor: default; }}
+.ph-nav {{ position: sticky; bottom: -1px; background: #fff; border-top: 1px solid #eee; display: flex;
+          justify-content: space-around; padding: 6px 0 4px; margin: 14px -4px 0; z-index: 5; }}
+.ph-nav div {{ font-size: .64rem; color: #7a7a7a; text-align: center; cursor: default; }}
+.ph-nav div span {{ display: block; font-size: 1rem; }}
+.ph-nav div.on {{ color: {HOST}; font-weight: 700; }}
+.st-key-phone .d-sum {{ padding: 12px 14px; }}
+.st-key-phone .d-sum .big {{ font-size: 1.6rem; }}
+.st-key-phone .d-sum .grid {{ gap: 14px; font-size: .78rem; }}
+.st-key-phone .d-sum .grid b {{ font-size: .88rem; }}
+.st-key-phone .g-hold .big {{ font-size: 1.55rem; }}
+.st-key-phone .fs-card {{ font-size: .86rem; padding: 10px 12px; }}
+.st-key-phone .fs-q {{ font-size: .84rem; margin-left: 15%; background: #1f2a24; color: #fff; }}
+.st-key-phone .d-sec {{ font-size: .92rem; margin: 14px 0 6px; }}
+.st-key-phone .stButton button {{ font-size: .78rem; }}
+.st-key-phone [data-testid="stExpander"] summary p {{ font-size: .76rem; }}
+.fs-outside {{ display: inline-block; background: #FFF1E6; color: #8a4b12; font-size: .72rem; border-radius: 6px;
+              padding: 2px 8px; margin: 2px 0 6px; }}
+.fs-links {{ font-size: .74rem; margin-top: 6px; }}
+.fs-src {{ font-size: .7rem; color: #6b6b6b; margin-top: 4px; }}
+.fs-help {{ font-size: .78rem; color: #444; margin: 4px 0 2px; }}
+/* bottom sheet inside the phone */
+.st-key-sheet {{ position: sticky; bottom: 0; z-index: 10; background: #fff; border-radius: 18px 18px 0 0;
+                box-shadow: 0 -8px 28px rgba(0,0,0,.18); padding: 10px 12px 12px; margin: 10px -6px 0;
+                border-top: 4px solid #e9e9e9; }}
+.sh-title {{ font-weight: 700; font-size: 1.05rem; }}
+.sh-val {{ float: right; color: #B3261E; }}
+.sh-sec {{ font-size: .66rem; letter-spacing: .6px; color: #6b6b6b; font-weight: 700; margin: 10px 0 2px; }}
+.sh-txt {{ font-size: .86rem; line-height: 1.4; }}
+.st-key-sheetchips .stButton button {{ border-radius: 16px; font-size: .76rem; width: auto; margin-bottom: 4px; }}
+.st-key-sheetchips .stButton {{ display: inline-block; margin-right: 6px; }}
+[class*="st-key-fbsheet"] [data-testid="stHorizontalBlock"] {{ flex-wrap: nowrap !important; gap: .4rem !important; }}
+[class*="st-key-fbsheet"] [data-testid="stColumn"] {{ min-width: 0 !important; }}
+.st-key-backbtn [data-testid="stHorizontalBlock"] {{ flex-wrap: nowrap !important; }}
+.st-key-backbtn [data-testid="stColumn"] {{ min-width: 0 !important; }}
+/* side panels */
+.pc-h {{ font-weight: 700; font-size: .78rem; letter-spacing: .6px; text-transform: uppercase; color: #6b6b6b; margin-bottom: 6px; }}
+.pc-task {{ background: #FFF8E6; border: 1px solid #f1e2b8; border-radius: 10px; padding: 9px 11px; font-size: .82rem; margin: 10px 0; }}
+.nt-h {{ font-weight: 700; color: {GREEN}; font-size: .92rem; margin-bottom: 4px; }}
+.st-key-notespanel p, .st-key-notespanel li {{ font-size: .82rem; }}
+.st-key-ctrlpanel, .st-key-notespanel {{ position: sticky; top: 10px; }}
+@media (min-width: 900px) {{
+  div:has(> .st-key-phone) {{ }}
+}}
+@media (max-width: 640px) {{
+  [data-testid="stColumn"]:has(.st-key-ctrlpanel) {{ order: 2; }}
+  [data-testid="stColumn"]:has(.st-key-notespanel) {{ order: 3; }}
+  .block-container {{ padding: .4rem .6rem 2rem !important; }}
+}}
+
 /* prototype strip (mentor controls) */
 .proto {{ background: #1f2a24; color: #e8efe9; font-size: .74rem; text-align: center; padding: 5px 10px;
          border-radius: 8px; margin-bottom: 6px; }}
@@ -170,8 +243,7 @@ CSS = f"""
 """
 
 DEAD = 'title="Not part of this FinSaar prototype"'
-PROTO = ('<div class="proto">Concept prototype · FinSaar, a concept feature for Groww · Fictional data · '
-         'Not investment advice · Not affiliated with Groww</div>')
+PROTO = '<div class="proto">Concept prototype · Not investment advice · Not affiliated with Groww</div>'
 
 
 def apply():

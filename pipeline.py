@@ -16,7 +16,7 @@ import rag
 DECLINE_PATTERNS = [
     r"\bshould (i|we)\b", r"\bshall i\b", r"\bwhat should\b", r"\bkya (karu|karun|karoon|karein|karen)\b",
     r"\b(karna|karni) chahiye\b", r"\bchahiye kya\b", r"\b(band|stop|pause|continue|rok)\s*(kar|kr)?\s*(du|dun|doon|u|un|oon|de|den|dein)\b",
-    r"\bwhich fund\b", r"\bbest fund\b", r"\b(kaunsa|konsa|kaun sa|kon sa) fund\b", r"\bswitch\b",
+    r"\bwhich fund\b", r"\bbest fund\b", r"\bbetter fund\b", r"\b(kaunsa|konsa|kaun sa|kon sa) fund\b", r"\bswitch\b",
     r"\brecommend", r"\bsuggest", r"\bgood time to\b", r"\bsahi (rahega|hai kya)\b", r"\bworth (continuing|it)\b",
     r"\b(sell|redeem|withdraw)\b", r"\b(buy|invest) more\b(?!\s+units)", r"\bnikaal\b", r"\bbech\b",
 ]
@@ -25,7 +25,7 @@ PREDICT_PATTERNS = [
     r"\bfuture\b", r"\bpredict", r"\bforecast", r"\bhow much will\b", r"\bgoing to (rise|fall|go|recover|grow)\b",
     r"\bkab tak\b", r"\bwap(a|aa)s aa", r"\bbadhega\b", r"\bgirega\b", r"\bkitna ho (jayega|jaega)\b", r"\baage kya\b",
 ]
-FUND_PATTERNS = [r"\bwhich fund\b", r"\bbest fund\b", r"\b(kaunsa|konsa|kaun sa|kon sa) fund\b", r"\bswitch\b",
+FUND_PATTERNS = [r"\bwhich fund\b", r"\bbest fund\b", r"\bbetter fund\b", r"\b(kaunsa|konsa|kaun sa|kon sa) fund\b", r"\bswitch\b",
                  r"\brecommend", r"\bstock\b"]
 
 

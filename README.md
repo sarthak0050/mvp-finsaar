@@ -6,23 +6,31 @@ value falls below what they invested, in English or Hinglish. Every AI answer pa
 
 > Concept prototype · Not investment advice · Not affiliated with Groww. All data is fictional.
 
-## Where FinSaar shows up
+## The prototype
 
-The MVP page looks like a typical investing app's fund page (holdings, SIP details, transactions), with FinSaar
-built into it at every moment of the journey:
+**Desktop:** a phone frame in the centre shows a Groww-style app with FinSaar inside it. On the left,
+**Prototype controls** (demo investor, journey moment for testing, Simulate next visit, Reset session, the
+mentor task, Guide and Eval links). On the right, **How it works** notes for the current screen.
+**Phone:** just the app, full screen (controls below).
 
-| Moment | FinSaar nudge | Suggested questions |
-|---|---|---|
-| ① First instalment | "₹2,000 bought 83.33 units at NAV ₹24.00" | What did my first ₹2,000 buy? · Why is XIRR not shown yet? |
-| ② Month 3 · value up | "Your SIP is ₹148 above what you invested" | Why is my value up? · Why did I get fewer units in July? · Should I invest more? |
-| ③ The dip · today | "Your SIP is ₹496 below what you invested" | Iska matlab paisa doob gaya? · What does XIRR mean? · Should I stop? |
+Screens inside the phone:
 
-* **Tap any number** (Returns, XIRR, Units, NAV) → a "FinSaar explains" sheet opens on the spot.
-* **In between:** each transaction has a ✦ (Why more units? / Why fewer units?) that explains that instalment.
-* **Chat** on the right for anything else. Every path uses the same pipeline and the same gate.
+1. **Home / Investments:** SIP card; when value < invested, the FinSaar card *"Your SIP is ₹496 below what you
+   invested. Want to understand it?"* (Explain this · Maybe later). Code decides when it appears.
+2. **Fund page:** value, returns, XIRR / Units / NAV chips, a "Your SIP this month" card built only from the
+   investor's own data, display-only Change amount / Skip / Pause / Cancel SIP, transactions with ✦ explainers.
+3. **Bottom sheet:** tap a number → *What it is* (definition) · *Your number* (calc) · *What it means for you now*
+   (AI, gated) · follow-up chips.
+4. **FinSaar chat:** any question in English or Hinglish; every answer shows "✓ Checked …" and
+   "How this answer was checked".
+5. **Advice question:** neutral options, "the decision is yours", SEBI registered-adviser and AMFI links.
+6. **Close the loop:** Did this help? Yes, clear · Explain simpler · Ask another; "FinSaar remembers: …".
+7. **Next visit:** *Last time: NAV. XIRR next?* (Continue · Not now), after **Simulate next visit**.
 
-The layout follows common investing-app patterns but uses FinSaar's own styling; it does not copy any real
-app's logo or branding.
+Journey moments ① first instalment and ② month 3 are **for testing only**; the real flow is ③ the dip.
+Out of scope by design: market or category comparisons, a pre-dip course, a fixed dip note, push alerts.
+Only FinSaar and what it needs work; the other Groww-style tabs and buttons are display-only. The layout is
+Groww-style but uses a plain text wordmark, not Groww's logo or brand assets.
 
 ## How an answer is made
 
@@ -96,7 +104,7 @@ never commit it.
 1. Push this folder to a GitHub repo (public or private).
 2. Go to <https://share.streamlit.io> → **Create app** → pick the repo, branch `main`, main file `app.py`.
 3. **Advanced settings → Python 3.11**, and paste the contents of your `secrets.toml` into **Secrets**
-   (`GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_FALLBACK_MODEL`, `AMFI_LINK`, `EVAL_PASSCODE`).
+   (`GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_FALLBACK_MODEL`, `AMFI_LINK`, `EVAL_PASSCODE`; optional `SEBI_LINK`).
 4. Deploy. The app is public by default (Settings → Sharing → "This app is public"), so viewers need no login.
 5. Open the URL on your phone and on a desktop and run the "Try this task" flow once.
 

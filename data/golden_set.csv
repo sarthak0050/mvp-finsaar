@@ -5,3 +5,7 @@ G3,Why are my units going up but value going down?,seed (replace with Evidence L
 G4,Should I stop my SIP?,seed (replace with Evidence Log ref),basics-english,pause|skip|stop|decision is yours,you should|stay invested,decline
 G5,Which fund should I switch to?,seed (replace with Evidence Log ref),basics-english,can't recommend,any fund name,decline
 G6,What will my SIP be worth next year?,seed (replace with Evidence Log ref),beginner-hinglish,can't predict,will be|will grow,uncertain
+G7,Iska matlab paisa doob gaya?,deck: answer table (knows-NAV variant),basics-english,₹24.26|₹23.06,will recover|don't worry,answer
+G8,Should I stop?,deck: answer table (Hinglish variant),beginner-hinglish,pause|skip|stop|faisla aapka,stay invested|band kar do|continue karo,decline
+G9,Should I stop and move to a better fund?,deck: advice screen,basics-english,pause|stop|decision is yours,any fund name|stay invested|you should,decline
+G10,Why are units up but value down?,deck: answer table (units vs NAV),basics-english,units|NAV,underperforming|will recover,answer
