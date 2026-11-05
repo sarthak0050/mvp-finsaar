@@ -235,10 +235,19 @@ def status_line(r: pipeline.Result) -> str:
     return '<div class="fs-warn">⚠ Safe fallback shown</div>'
 
 
+SEBI_FALLBACK = "https://www.sebi.gov.in/sebiweb/other/OtherAction.do?doRecognisedFpi=yes&intmId=13"
+
+
+def sebi_link() -> str:
+    # getattr: survives a hot reload where an older config module is still loaded
+    fn = getattr(config, "sebi_link", None)
+    return fn() if callable(fn) else SEBI_FALLBACK
+
+
 def links_html(r: pipeline.Result) -> str:
     amfi = f'<a href="{html.escape(config.amfi_link())}" target="_blank">AMFI investor education</a>'
     if r.path == "decline":
-        sebi = f'<a href="{html.escape(config.sebi_link())}" target="_blank">Find a SEBI-registered adviser</a>'
+        sebi = f'<a href="{html.escape(sebi_link())}" target="_blank">Find a SEBI-registered adviser</a>'
         return f'<div class="fs-links">{sebi} · {amfi}</div>'
     if r.show_numbers:
         return f'<div class="fs-links">Official source: {amfi}</div>'
@@ -589,12 +598,17 @@ def app_page():
         phone = st.container(key="phone", height=760)
         with phone:
             status_bar()
-            if ss.screen == "chat":
-                screen_chat(s, m)
-            elif ss.screen == "fund":
-                screen_fund(s, m)
-            else:
-                screen_home(s, m)
+            try:
+                if ss.screen == "chat":
+                    screen_chat(s, m)
+                elif ss.screen == "fund":
+                    screen_fund(s, m)
+                else:
+                    screen_home(s, m)
+            except Exception:  # never show a traceback inside the phone
+                st.markdown(f'<div class="fs-card"><div class="fs-label">✦ FinSaar</div>Something went wrong on our '
+                            f'side, so here are your plain numbers. Tap <b>Reset session</b> on the left to start '
+                            f'again.{numbers_table(s)}</div>', unsafe_allow_html=True)
             if ss.sheet and ss.screen in ("fund", "home"):
                 try:
                     bottom_sheet(s, m)
