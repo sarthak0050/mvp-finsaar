@@ -21,11 +21,11 @@ def render(next_page):
 
     st.markdown("#### Try it in 4 steps")
     steps = [
-        ("Open the app", f"Press <b>Next</b>. The phone shows the investor's SIP, {calc.inr(s.gain)} below what "
-                         "they invested, with a <b>FinSaar card</b>. Tap <b>Explain this</b>."),
-        ("Tap a number", "Open the fund and tap <b>XIRR, Units or NAV</b>. A sheet shows what it is, your number, "
-                         "and what it means for you now."),
-        ("Ask anything", "In the FinSaar chat, ask in English or Hinglish. Then <b>Yes, clear</b>, <b>Explain "
+        ("Open the app", f"Press <b>Next</b>. Mutual Funds → Dashboard shows the SIP {calc.inr(s.gain)} below what "
+                         "was invested, with one FinSaar line. Tap <b>Explain this</b>."),
+        ("Tap a number", "Any label with a dotted underline and <b>✦</b> (Total returns, XIRR, Units, Current NAV) "
+                         "opens a sheet: what it is, your number, what it means for you now."),
+        ("Ask anything", "On the fund page, tap <b>✦ Ask FinSaar</b>. Ask in English or Hinglish. Then <b>Yes, clear</b>, <b>Explain "
                          "simpler</b> or <b>Ask another</b>. Try <i>Should I stop?</i>"),
         ("Switch and come back", "On the left, switch the <b>demo investor</b>, or press <b>Simulate next visit</b> "
                                  "to see <i>Last time: NAV. XIRR next?</i>"),

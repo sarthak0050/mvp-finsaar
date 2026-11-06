@@ -41,7 +41,8 @@
       "date": "2026-06-05",
       "nav": 24.0,
       "instalments": 1,
-      "next_instalment": "2026-07-05"
+      "next_instalment": "2026-07-05",
+      "prev_nav": null
     },
     {
       "id": "midway",
@@ -49,7 +50,8 @@
       "date": "2026-08-20",
       "nav": 25.1,
       "instalments": 3,
-      "next_instalment": "2026-09-05"
+      "next_instalment": "2026-09-05",
+      "prev_nav": 25.02
     },
     {
       "id": "dip",
@@ -57,7 +59,8 @@
       "date": "2026-11-05",
       "nav": 23.06,
       "instalments": 5,
-      "next_instalment": "2026-12-05"
+      "next_instalment": "2026-12-05",
+      "prev_nav": 23.18
     }
   ],
   "default_scenario": "dip"

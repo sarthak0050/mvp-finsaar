@@ -60,6 +60,104 @@ CSS = f"""
 .tile .lbl {{ color: #6b6b6b; font-size: 0.78rem; }}
 .tile .v {{ font-weight: 700; font-size: 1.05rem; }}
 
+
+/* ---------- Groww-style design system (inside the phone) ---------- */
+.st-key-phone {{ --gw-text: #44475b; --gw-dark: #1d1d1f; --gw-grey: #7c7e8c; --gw-line: #e9e9eb;
+  --gw-green: #00b386; --gw-red: #eb5b3c; --gw-blue: #5367ff; color: var(--gw-text); }}
+.st-key-phone .neg {{ color: var(--gw-red) !important; }}
+.st-key-phone .pos {{ color: var(--gw-green) !important; }}
+.gw-head {{ display: flex; align-items: center; gap: 10px; padding: 6px 2px 8px; }}
+.gw-mark {{ width: 34px; height: 34px; border-radius: 50%; flex: none;
+           background: radial-gradient(circle at 35% 35%, #7b8cff, #5367ff 55%, #00d09c); }}
+.gw-title {{ font-size: 1.12rem; color: var(--gw-dark); font-weight: 600; }}
+.gw-icons {{ margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 1.3rem; color: var(--gw-text); }}
+.gw-av {{ width: 32px; height: 32px; border-radius: 50%; background: #eef3e2; color: #6b7d2a; font-size: .8rem;
+         display: inline-flex; align-items: center; justify-content: center; font-weight: 600; }}
+.st-key-mftabs {{ border-bottom: 1px solid var(--gw-line); margin: 0 -10px 10px; padding: 0 6px; }}
+.st-key-mftabs [data-testid="stHorizontalBlock"] {{ flex-wrap: nowrap !important; gap: 0 !important; }}
+.st-key-mftabs [data-testid="stColumn"] {{ min-width: 0 !important; }}
+.st-key-mftabs .stButton button, .st-key-mftabs .stButton button[kind="tertiary"], .st-key-mftabs .stButton button[kind="primary"] {{
+  width: 100% !important; height: 40px; justify-content: center !important; align-items: center !important; background: transparent !important; border: none !important; border-radius: 0 !important;
+  color: #8a8c99 !important; padding: 6px 0 9px !important; min-height: 0 !important; box-shadow: none !important; }}
+.st-key-mftabs .stButton button p {{ font-size: .84rem !important; white-space: nowrap; }}
+.st-key-mftabs .stButton button[kind="primary"] {{ color: var(--gw-dark) !important; border-bottom: 3px solid #44475b !important;
+  border-radius: 2px 2px 0 0 !important; }}
+.st-key-mftabs .stButton button[kind="tertiary"] {{ border-bottom: 3px solid transparent !important; }}
+.st-key-mftabs .stButton button[kind="primary"] p {{ font-weight: 600; }}
+.gw-card, .st-key-holdcard {{ border: 1px solid var(--gw-line) !important; border-radius: 16px; padding: 14px 16px !important;
+  margin-bottom: 12px; background: #fff; }}
+.st-key-holdcard {{ gap: 0 !important; }}
+.gw-cap {{ font-size: .68rem; letter-spacing: 2.2px; color: var(--gw-grey); font-weight: 600; }}
+.gw-big {{ font-size: 1.55rem; color: var(--gw-dark); font-weight: 600; margin: 2px 0 2px; }}
+.gw-dash {{ border-top: 1px dashed #d6d6da; margin: 8px 0 4px; }}
+.st-key-holdcard [data-testid="stHorizontalBlock"] {{ flex-wrap: nowrap !important; gap: .3rem !important; min-height: 34px; }}
+.st-key-holdcard [data-testid="stColumn"] {{ min-width: 0 !important; }}
+.gw-lbl {{ font-size: .88rem; color: var(--gw-grey); }}
+.gw-val {{ font-size: .9rem; text-align: right; color: var(--gw-dark); }}
+.st-key-phone .stButton button[kind="tertiary"] {{ padding: 0 !important; min-height: 0 !important; width: auto !important;
+  background: transparent !important; border: none !important; justify-content: flex-start; }}
+.st-key-holdcard .stButton button[kind="tertiary"] p {{ font-size: .88rem !important; color: var(--gw-grey);
+  text-decoration: underline dotted #a5a7b3; text-underline-offset: 4px; }}
+.gw-listhead {{ display: flex; justify-content: space-between; align-items: center; margin: 6px 0 4px; font-size: .84rem; }}
+.gw-filter {{ border: 1px solid var(--gw-line); border-radius: 50%; width: 34px; height: 34px; display: inline-flex;
+             align-items: center; justify-content: center; }}
+.gw-dotted {{ text-decoration: underline dotted #a5a7b3; text-underline-offset: 4px; color: var(--gw-dark); font-size: .84rem; }}
+.st-key-fundrow, .st-key-siprow {{ border-bottom: 1px solid var(--gw-line); padding: 6px 0 8px; }}
+.st-key-fundrow [data-testid="stHorizontalBlock"], .st-key-siprow [data-testid="stHorizontalBlock"] {{ flex-wrap: nowrap !important; }}
+.st-key-fundrow [data-testid="stColumn"], .st-key-siprow [data-testid="stColumn"] {{ min-width: 0 !important; }}
+.st-key-fundrow .stButton button, .st-key-siprow .stButton button {{ border: none !important; background: transparent !important;
+  padding: 0 !important; justify-content: flex-start !important; min-height: 0 !important; }}
+.st-key-fundrow .stButton button p, .st-key-siprow .stButton button p {{ text-align: left; font-size: .9rem !important;
+  color: var(--gw-dark); line-height: 1.55; }}
+.st-key-fundrow .stButton button > div, .st-key-siprow .stButton button > div {{ justify-content: flex-start !important; width: 100%; }}
+.gw-rowval {{ text-align: right; font-size: .95rem; }}
+.gw-rowval small {{ color: var(--gw-grey); font-size: .8rem; }}
+.gw-pill-btn {{ margin: 18px auto 6px; width: fit-content; border: 1px solid #d9d9de; border-radius: 10px; padding: 8px 16px;
+               font-size: .85rem; cursor: default; }}
+.gw-sechead {{ display: flex; justify-content: space-between; align-items: center; margin: 14px 0 8px; font-size: .95rem;
+              color: var(--gw-dark); }}
+.gw-muted {{ color: var(--gw-grey); font-size: .8rem; }}
+.gw-link {{ color: var(--gw-green); font-size: .88rem; cursor: default; }}
+.gw-date {{ border: 1px solid var(--gw-line); border-radius: 10px; text-align: center; font-size: .75rem; color: var(--gw-grey);
+           padding: 4px 0; line-height: 1.3; }}
+.gw-date b {{ font-size: .95rem; color: var(--gw-dark); font-weight: 600; }}
+.gw-tile {{ display: inline-flex; width: 36px; height: 36px; border-radius: 9px; color: #fff; font-size: .72rem; font-weight: 700;
+           align-items: center; justify-content: center; flex: none; }}
+.gw-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }}
+.gw-fcard {{ border: 1px solid var(--gw-line); border-radius: 14px; padding: 12px; font-size: .84rem; color: var(--gw-dark);
+            cursor: default; display: flex; flex-direction: column; gap: 8px; }}
+.gw-wrow {{ display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--gw-line);
+           font-size: .88rem; color: var(--gw-dark); cursor: default; }}
+.gw-fhead {{ display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--gw-dark); font-size: .95rem; line-height: 1.25; }}
+.gw-sip {{ display: flex; justify-content: space-between; font-size: .9rem; color: var(--gw-dark); margin-bottom: 0; }}
+.gw-manage {{ display: flex; justify-content: space-between; padding: 10px 2px; border-bottom: 1px solid var(--gw-line);
+             font-size: .88rem; color: var(--gw-dark); cursor: default; }}
+.gw-tx {{ display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--gw-line);
+         font-size: .86rem; color: var(--gw-dark); }}
+.gw-nav {{ position: sticky; bottom: -1px; background: #fff; border-top: 1px solid var(--gw-line); display: flex;
+          justify-content: space-around; padding: 8px 0 6px; margin: 18px -10px 0; z-index: 5; }}
+.gw-nav div {{ font-size: .68rem; color: #8a8c99; text-align: center; cursor: default; }}
+.gw-nav div span {{ display: block; font-size: 1.1rem; }}
+.gw-nav div.on {{ color: var(--gw-blue); font-weight: 600; }}
+/* FinSaar inside the host UI: quiet, inline, dismissible */
+.st-key-fsline {{ background: #F3F8EE; border-radius: 12px; padding: 10px 12px !important; margin: 0 0 10px; gap: .4rem !important; }}
+.fs-line {{ display: flex; gap: 8px; font-size: .86rem; color: var(--gw-dark); line-height: 1.4; }}
+.fs-dot {{ color: {GREEN}; font-weight: 700; }}
+.fs-dot.big {{ font-size: 1.1rem; }}
+.st-key-fsline [data-testid="stHorizontalBlock"] {{ flex-wrap: nowrap !important; gap: .5rem !important; }}
+.st-key-fsline [data-testid="stColumn"] {{ min-width: 0 !important; }}
+.st-key-fsline .stButton button[kind="tertiary"] p {{ color: var(--gw-grey); font-size: .82rem !important; }}
+.st-key-fsline .stButton button[kind="tertiary"] {{ padding-top: 6px !important; }}
+.st-key-fspill {{ position: sticky; bottom: 14px; z-index: 6; display: flex; align-items: flex-end; margin-top: 10px; }}
+.st-key-fspill .stButton {{ display: flex; justify-content: flex-end; width: 100%; }}
+.st-key-fspill .stButton button {{ width: auto !important; border-radius: 22px !important; background: #1d1d1f !important;
+  border-color: #1d1d1f !important; box-shadow: 0 6px 18px rgba(0,0,0,.25); padding: 8px 16px !important; }}
+.sh-grab {{ width: 40px; height: 4px; border-radius: 3px; background: #d9d9de; margin: 0 auto 8px; }}
+.sh-sec {{ text-transform: uppercase; }}
+.st-key-sheet .sh-val {{ float: right; color: var(--gw-dark); font-weight: 600; }}
+.st-key-sheetchips {{ flex-direction: row !important; flex-wrap: wrap; gap: 6px !important; margin-top: 4px; }}
+.st-key-sheetchips > div {{ width: auto !important; }}
+
 /* ---------- phone prototype ---------- */
 .st-key-phone {{ background: #fff; }}
 @media (min-width: 641px) {{
@@ -107,7 +205,7 @@ CSS = f"""
 /* bottom sheet inside the phone */
 .st-key-sheet {{ position: sticky; bottom: 0; z-index: 10; background: #fff; border-radius: 18px 18px 0 0;
                 box-shadow: 0 -8px 28px rgba(0,0,0,.18); padding: 10px 12px 12px; margin: 10px -6px 0;
-                border-top: 4px solid #e9e9e9; }}
+                }}
 .sh-title {{ font-weight: 700; font-size: 1.05rem; }}
 .sh-val {{ float: right; color: #B3261E; }}
 .sh-sec {{ font-size: .66rem; letter-spacing: .6px; color: #6b6b6b; font-weight: 700; margin: 10px 0 2px; }}
@@ -248,6 +346,7 @@ PROTO = '<div class="proto">Concept prototype · Not investment advice · Not af
 
 def apply():
     st.markdown(CSS, unsafe_allow_html=True)
+    st.markdown(CSS_FIX, unsafe_allow_html=True)
     st.markdown(PROTO, unsafe_allow_html=True)
 
 
@@ -271,3 +370,27 @@ def host_shell(sub: str | None = "Dashboard"):
         subs = "".join(f'<span class="{"on" if t == sub else ""}" {DEAD}>{t}</span>'
                        for t in ["Explore", "Dashboard", "SIPs", "Watchlist"])
         st.markdown(f'<div class="h-sub">{subs}</div>', unsafe_allow_html=True)
+
+CSS_FIX = """
+<style>
+.st-key-holdcard .stMarkdown, .st-key-fsline .stMarkdown, .st-key-fundrow .stMarkdown, .st-key-siprow .stMarkdown { margin-bottom: 0 !important; }
+.st-key-holdcard [data-testid="stMarkdownContainer"] p, .st-key-fsline [data-testid="stMarkdownContainer"] p { margin: 0; }
+.st-key-holdcard [data-testid="stHorizontalBlock"] { align-items: center !important; min-height: 36px; }
+.st-key-holdcard [data-testid="stColumn"] > div { justify-content: center; }
+.st-key-holdcard .stButton button[kind="tertiary"] { height: 28px; align-items: center !important; }
+.st-key-fsline { gap: .55rem !important; }
+.st-key-fundrow .stButton button [data-testid="stMarkdownContainer"],
+.st-key-siprow .stButton button [data-testid="stMarkdownContainer"] { text-align: left !important; width: 100%; }
+.st-key-fundrow .stButton button p, .st-key-siprow .stButton button p { text-align: left !important; }
+.st-key-mftabs .stButton button { align-items: center !important; padding: 0 !important; }
+.st-key-mftabs .stButton button > div { align-items: center; }
+.st-key-holdcard .stButton button[kind="tertiary"] { position: relative; top: 8px; }
+.st-key-fsline [data-testid="stElementContainer"] { height: auto !important; min-height: fit-content; }
+/* the phone is a fixed-height scroll box: never let its contents shrink to fit */
+.st-key-phone > *, .st-key-phone [data-testid="stVerticalBlock"] > * { flex-shrink: 0 !important; }
+.st-key-fsline .stMarkdown, .st-key-fsline [data-testid="stMarkdownContainer"] { height: auto !important; overflow: visible;
+  margin-bottom: 0 !important; }
+.fs-line { display: flex; padding-bottom: 2px; }
+.gw-nav svg { width: 22px; height: 22px; display: block; margin: 0 auto 2px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+</style>
+"""

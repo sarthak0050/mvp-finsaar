@@ -32,18 +32,18 @@ def moment(s: calc.SipSummary) -> dict:
     xirr_txt = calc.signed_pct(s.xirr_pct, 1) if s.xirr_pct is not None else None
     if s.scenario == "start":
         chips = ["What did my first ₹2,000 buy?", "What is NAV?", "Why is XIRR not shown yet?"]
-        tiles = {"XIRR": "Why is XIRR not shown yet?", "Units": f"What do my {s.total_units:.2f} units mean?",
+        tiles = {"Returns": "Why are my returns zero?", "XIRR": "Why is XIRR not shown yet?", "Units": f"What do my {s.total_units:.2f} units mean?",
                  "NAV": "What does NAV mean for me?"}
         nudge_q = "What did my first ₹2,000 buy?"
     elif s.is_up:
         chips = ["Why is my value up?", "What does XIRR mean for me?", "Should I invest more?"]
-        tiles = {"XIRR": f"What does my XIRR of {xirr_txt} mean for me?",
+        tiles = {"Returns": "Why is my value up?", "XIRR": f"What does my XIRR of {xirr_txt} mean for me?",
                  "Units": f"What do my {s.total_units:.2f} units mean?", "NAV": "What does NAV mean for me?"}
         nudge_q = "Why is my value up?"
     else:
         chips = ["Iska matlab paisa doob gaya?", "Why are units up but value down?", "What does XIRR mean for me?",
                  "Should I stop and move to a better fund?"]
-        tiles = {"XIRR": f"What does my XIRR of {xirr_txt} mean for me?",
+        tiles = {"Returns": "Iska matlab paisa doob gaya?", "XIRR": f"What does my XIRR of {xirr_txt} mean for me?",
                  "Units": "Why are units up but value down?", "NAV": "What does NAV mean for me?"}
         nudge_q = "Iska matlab paisa doob gaya?"
     return {"chips": chips, "tiles": tiles, "nudge_q": nudge_q}
@@ -60,6 +60,14 @@ def sheet_facts(metric: str, s: calc.SipSummary) -> tuple[str, str, list[str]]:
         else:
             mine = f"{calc.signed_pct(s.xirr_pct, 1)} a year, from {n} instalments of {calc.inr(s.monthly_amount)} ({inv}) now worth {val}."
             follow = [f"Why is it so different from {calc.signed_pct(s.gain_pct, 2)}?", "Will my XIRR stay this low?"]
+    elif metric == "Returns":
+        what = "How far your investment is above or below what you put in. It stays a paper gain or loss until you redeem."
+        if s.is_down or s.is_up:
+            mine = (f"{calc.inr(s.gain)} {'below' if s.is_down else 'above'} invested: {val} today against {inv} "
+                    f"({calc.signed_pct(s.gain_pct, 2)}).")
+        else:
+            mine = f"{val} today, the same as the {inv} you invested."
+        follow = ["Why are units up but value down?", "Should I stop?"] if s.is_down else ["What does XIRR mean for me?"]
     elif metric == "NAV":
         what = "The price of one unit of the fund. It is worked out at the end of every business day."
         mine = f"{calc.inr(s.current_nav, 2)} today. You bought at an average of {calc.inr(s.avg_nav, 2)} per unit."
@@ -86,11 +94,12 @@ def init_state():
     ss.setdefault("pending", None)
     ss.setdefault("hint", "")
     ss.setdefault("sheet_cache", {})
-    ss.setdefault("screen", "home")      # home | fund | chat
+    ss.setdefault("screen", "mf")        # mf | fund | chat
+    ss.setdefault("tab", "Dashboard")    # Explore | Dashboard | SIPs | Watchlist
     ss.setdefault("sheet", None)         # XIRR | NAV | Units | ✦ question
     ss.setdefault("visit", 1)
     ss.setdefault("explained", [])       # terms explained in earlier answers (for "Last time: …")
-    ss.setdefault("chat_back", "fund")
+    ss.setdefault("chat_back", "mf")
 
 
 def current_profile() -> dict:
@@ -164,7 +173,8 @@ def _clear_conversation():
     ss.turns, ss.feedback_done, ss.hint, ss.pending = [], set(), "", None
     ss.card_dismissed = False
     ss.sheet = None
-    ss.screen = "home"
+    ss.screen = "mf"
+    ss.tab = "Dashboard"
 
 
 def on_scenario():
@@ -288,167 +298,218 @@ def memory_line() -> str:
 
 def ret_text(s: calc.SipSummary) -> tuple[str, str]:
     if s.is_down or s.is_up:
-        return f"{'−' if s.is_down else '+'}{calc.inr(s.gain)} ({calc.signed_pct(s.gain_pct, 2)})", \
+        return f"{'−' if s.is_down else '+'}{calc.inr(s.gain)} ({calc.signed_pct(s.gain_pct, 2).lstrip('+−')})", \
                ("neg" if s.is_down else "pos")
     return "₹0 (0.00%)", ""
+
+
+def xirr_text(s: calc.SipSummary) -> str:
+    return calc.signed_pct(s.xirr_pct, 1) if s.xirr_pct is not None else "--"
 
 
 def status_bar():
     st.markdown('<div class="ph-status"><b>9:41</b><span>▂▄▆ 📶 🔋</span></div>', unsafe_allow_html=True)
 
 
-def bottom_nav(active: str = "Home"):
-    items = [("🏠", "Home"), ("📈", "Stocks"), ("🪙", "Mutual Funds"), ("👤", "Profile")]
-    cells = "".join(f'<div class="{"on" if label == active else ""}" {ui_style.DEAD}><span>{icon}</span>{label}</div>'
+def bottom_nav():
+    sv = lambda d: f'<svg viewBox="0 0 24 24">{d}</svg>'
+    items = [(sv('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M6 15l4-4 3 3 5-6"/>'), "Stocks"),
+             (sv('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l6-6 4 4 8-8"/>'), "F&amp;O"),
+             (sv('<circle cx="12" cy="12" r="8"/><path d="M12 4v8l6 5"/>'), "Mutual Funds"),
+             (sv('<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>'), "Loans")]
+    cells = "".join(f'<div class="{"on" if label == "Mutual Funds" else ""}" {ui_style.DEAD}><span>{icon}</span>{label}</div>'
                     for icon, label in items)
-    st.markdown(f'<div class="ph-nav">{cells}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="gw-nav">{cells}</div>', unsafe_allow_html=True)
+
+
+def tap_label(label: str, key: str, sheet: str):
+    """A Groww-style dotted-underline label that opens the FinSaar sheet for that number."""
+    if st.button(f"{label} :green[✦]", key=key, type="tertiary", help="What does this mean for me?"):
+        st.session_state.sheet = sheet
+        st.rerun()
+
+
+def kv_row(label_html: str, value_html: str, tap: tuple[str, str] | None = None, key: str = ""):
+    c1, c2 = st.columns([1.25, 1], vertical_alignment="center")
+    if tap:
+        with c1:
+            tap_label(tap[0], key, tap[1])
+    else:
+        c1.markdown(f'<div class="gw-lbl">{label_html}</div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="gw-val">{value_html}</div>', unsafe_allow_html=True)
 
 
 # ---------- phone screens ----------
 
-def screen_home(s: calc.SipSummary, m: dict):
+def mf_header():
     ss = st.session_state
-    st.markdown(f'<div class="ph-head"><span class="wordmark" {ui_style.DEAD}><span class="h-mark"></span>Groww</span>'
-                f'<span class="ph-icons" {ui_style.DEAD}>🔍 🔔</span></div>'
-                f'<div class="ph-tabs"><span {ui_style.DEAD}>Stocks</span><span class="on" {ui_style.DEAD}>Mutual Funds</span>'
-                f'<span {ui_style.DEAD}>F&amp;O</span></div>'
-                f'<div class="h-sub"><span {ui_style.DEAD}>Explore</span><span class="on" {ui_style.DEAD}>Dashboard</span>'
-                f'<span {ui_style.DEAD}>SIPs</span><span {ui_style.DEAD}>Watchlist</span></div>', unsafe_allow_html=True)
-    ret, tone = ret_text(s)
-    xirr = calc.signed_pct(s.xirr_pct, 1) if s.xirr_pct is not None else "—"
-    st.markdown(f'<div class="d-sum"><div class="lbl">Current value</div><div class="big">{calc.inr(s.current_value)}</div>'
-                f'<div class="grid"><div><span class="lbl">Invested</span><b>{calc.inr(s.invested)}</b></div>'
-                f'<div><span class="lbl">Returns</span><b class="{tone}">{ret}</b></div>'
-                f'<div><span class="lbl">XIRR</span><b class="{tone}">{xirr}</b></div></div></div>',
-                unsafe_allow_html=True)
+    st.markdown(f'<div class="gw-head"><span class="gw-mark" {ui_style.DEAD}></span><span class="gw-title">Mutual Funds</span>'
+                f'<span class="gw-icons" {ui_style.DEAD}><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#44475b" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span class="gw-av">A</span></span></div>', unsafe_allow_html=True)
+    cols = st.container(key="mftabs").columns(4)
+    for col, t in zip(cols, ["Explore", "Dashboard", "SIPs", "Watchlist"]):
+        if col.button(t, key=f"tab_{t}", type="primary" if ss.tab == t else "tertiary", width="stretch"):
+            ss.tab = t
+            st.rerun()
 
-    # Entry point 3: when you come back (in-app only)
+
+def finsaar_inline(s: calc.SipSummary, m: dict):
+    """Entry points 1 and 3: one quiet line under the holdings card, dismissible."""
+    ss = st.session_state
     last = ss.explained[-1] if ss.explained else None
     nxt = next((t for t in TERM_ORDER if t not in ss.understood and t not in ss.explained), None)
-    if ss.visit > 1 and last and nxt and not ss.card_dismissed:
-        st.markdown(f'<div class="fs-card"><div class="fs-label">✦ FinSaar · welcome back</div>'
-                    f'Last time: <b>{last}</b>. <b>{nxt}</b> next?</div>', unsafe_allow_html=True)
-        c1, c2, _ = st.container(key="nudge").columns([1.1, 1, 0.6])
-        if c1.button("Continue", type="primary", key="back_go"):
+    if ss.card_dismissed:
+        return
+    if ss.visit > 1 and last and nxt:
+        text, cta, q = f"Last time: <b>{last}</b>. {nxt} next?", "Continue", TERM_QUESTION[nxt]
+    elif s.is_down:
+        text, cta, q = f"Your SIP is <b>{calc.inr(s.gain)} below</b> what you invested. Want to understand it?", \
+                       "Explain this", m["nudge_q"]
+    else:
+        return
+    with st.container(key="fsline"):
+        st.markdown(f'<div class="fs-line"><span class="fs-dot">✦</span><span>{text}</span></div>', unsafe_allow_html=True)
+        c1, c2, _ = st.columns([1.2, 1, 1])
+        if c1.button(cta, key="fs_go", type="primary"):
             ss.card_dismissed = True
-            ask(TERM_QUESTION[nxt])
+            ask(q)
             st.rerun()
-        if c2.button("Not now", key="back_later"):
-            ss.card_dismissed = True
-            st.rerun()
-    # Entry point 1: value below invested (code decides when this appears)
-    elif s.is_down and not ss.card_dismissed:
-        st.markdown(f'<div class="fs-card"><div class="fs-label">✦ FinSaar</div>Your SIP is <b>{calc.inr(s.gain)} '
-                    f'below</b> what you invested. Want to understand it?</div>', unsafe_allow_html=True)
-        c1, c2, _ = st.container(key="nudge").columns([1.1, 1, 0.6])
-        if c1.button("Explain this", type="primary", key="home_go"):
-            ss.card_dismissed = True
-            ask(m["nudge_q"])
-            st.rerun()
-        if c2.button("Maybe later", key="home_later"):
+        if c2.button("Not now", key="fs_later", type="tertiary"):
             ss.card_dismissed = True
             st.rerun()
 
-    st.markdown('<div class="d-sec">Your SIPs (1)</div>', unsafe_allow_html=True)
-    label = (f"**{s.fund}**  \nSIP {calc.inr(s.monthly_amount)}/month · {s.n_instalments} instalment"
-             f"{'s' if s.n_instalments > 1 else ''}  \nCurrent {calc.inr(s.current_value)} · {ret}")
-    with st.container(key="holdrow"):
-        if st.button(label, key="open_fund", width="stretch"):
+
+def tab_dashboard(s: calc.SipSummary, m: dict):
+    ret, tone = ret_text(s)
+    od = s.one_day
+    od_txt = (f'<span class="{"neg" if od[0] < 0 else "pos"}">{"−" if od[0] < 0 else "+"}{calc.inr(od[0], 2)} '
+              f'({abs(od[1]):.2f}%)</span>') if od else "--"
+    with st.container(key="holdcard"):
+        st.markdown(f'<div class="gw-cap">HOLDINGS (1)</div><div class="gw-big">{calc.inr(s.current_value)}</div>'
+                    f'<div class="gw-dash"></div>', unsafe_allow_html=True)
+        kv_row("1D returns", od_txt)
+        kv_row("", f'<span class="{tone}">{ret}</span>', tap=("Total returns", "Returns"), key="t_ret")
+        kv_row("Invested", calc.inr(s.invested))
+        kv_row("", f'<span class="{tone if s.xirr_pct is not None else ""}">{xirr_text(s)}</span>',
+               tap=("XIRR (Active)", "XIRR"), key="t_xirr")
+    finsaar_inline(s, m)
+    st.markdown('<div class="gw-listhead"><span class="gw-filter" ' + ui_style.DEAD + '>☰</span>'
+                '<span class="gw-dotted">Current (Invested)</span></div>', unsafe_allow_html=True)
+    tone_c = {"neg": "neg", "pos": "pos"}.get(tone, "")
+    with st.container(key="fundrow"):
+        c1, c2 = st.columns([3, 1.1], vertical_alignment="center")
+        if c1.button(f"{s.fund}  \n:gray[SIP]", key="open_fund", width="stretch"):
             go("fund")
             st.rerun()
-    st.markdown(f'<div class="d-sec">Popular funds</div><div class="d-dead" {ui_style.DEAD}><b>Sample Index Fund '
-                f'(fictional)</b>Equity · Index</div>', unsafe_allow_html=True)
-    bottom_nav("Mutual Funds")
+        c2.markdown(f'<div class="gw-rowval"><span class="{tone_c}">{calc.inr(s.current_value)}</span>'
+                    f'<br><small>({calc.inr(s.invested)})</small></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="gw-pill-btn" {ui_style.DEAD}>⤓ Import external funds</div>', unsafe_allow_html=True)
+
+
+def tab_sips(s: calc.SipSummary):
+    nxt = s.next_instalment
+    st.markdown(f'<div class="gw-card"><div class="gw-cap">MONTHLY SIP AMOUNT</div>'
+                f'<div class="gw-big">{calc.inr(s.monthly_amount)}</div></div>'
+                f'<div class="gw-sechead"><b>Active SIPs (1)</b><span class="gw-dotted" {ui_style.DEAD}>Sort by: Due date</span></div>',
+                unsafe_allow_html=True)
+    with st.container(key="siprow"):
+        c0, c1, c2 = st.columns([0.7, 3, 0.9], vertical_alignment="center")
+        c0.markdown('<span class="gw-tile" style="background:#1d6f42">SF</span>', unsafe_allow_html=True)
+        if c1.button(f"{s.fund}  \n:gray[{calc.inr(s.monthly_amount)}]", key="open_fund_sip", width="stretch"):
+            go("fund")
+            st.rerun()
+        if nxt:
+            c2.markdown(f'<div class="gw-date"><b>{nxt.day:02d}</b><br>{nxt.strftime("%b")}</div>', unsafe_allow_html=True)
+
+
+def tab_explore():
+    cards = "".join(f'<div class="gw-fcard" {ui_style.DEAD}><span class="gw-tile" style="background:{c}">{i}</span>'
+                    f'<div>{n}</div><div class="gw-muted">{cat}</div></div>'
+                    for i, n, cat, c in [("SL", "Sample Large Cap Fund (fictional)", "Equity · Large Cap", "#5367ff"),
+                                         ("SI", "Sample Index Fund (fictional)", "Equity · Index", "#00b386"),
+                                         ("SD", "Sample Debt Fund (fictional)", "Debt · Short duration", "#f2994a"),
+                                         ("SF", "Sample Flexi Cap Fund (fictional)", "Equity · Flexi Cap", "#1d6f42")])
+    st.markdown(f'<div class="gw-sechead"><b>Popular Funds</b><span class="gw-muted" {ui_style.DEAD}>View all ›</span></div>'
+                f'<div class="gw-grid">{cards}</div>', unsafe_allow_html=True)
+
+
+def tab_watchlist():
+    rows = "".join(f'<div class="gw-wrow" {ui_style.DEAD}><span class="gw-tile" style="background:{c}">{i}</span>'
+                   f'<div><div>{n}</div><div class="gw-muted">{cat}</div></div></div>'
+                   for i, n, cat, c in [("SL", "Sample Large Cap Fund (fictional)", "Equity · Large Cap", "#5367ff"),
+                                        ("SI", "Sample Index Fund (fictional)", "Equity · Index", "#00b386")])
+    st.markdown(f'<div class="gw-sechead"><span class="gw-muted">Mutual Funds</span></div>{rows}'
+                f'<div class="gw-sechead"><span class="gw-link" {ui_style.DEAD}>Add funds</span>'
+                f'<span class="gw-link" {ui_style.DEAD}>Edit watchlist</span></div>', unsafe_allow_html=True)
+
+
+def screen_mf(s: calc.SipSummary, m: dict):
+    mf_header()
+    tab = st.session_state.tab
+    if tab == "Dashboard":
+        tab_dashboard(s, m)
+    elif tab == "SIPs":
+        tab_sips(s)
+    elif tab == "Explore":
+        tab_explore()
+    else:
+        tab_watchlist()
+    bottom_nav()
 
 
 def screen_fund(s: calc.SipSummary, m: dict):
     ss = st.session_state
     with st.container(key="backbtn"):
-        b1, b2 = st.columns([1, 6], vertical_alignment="center")
-        if b1.button("←", key="fund_back", help="Back"):
-            go("home")
+        b1, b2 = st.columns([1, 7], vertical_alignment="center")
+        if b1.button("←", key="fund_back", type="tertiary"):
+            go("mf")
             st.rerun()
-        b2.markdown(f'<div class="ph-title">{html.escape(s.fund)}</div>'
-                    f'<div class="g-tags"><span>Equity</span><span>Flexi Cap</span><span>Direct · Growth</span></div>',
-                    unsafe_allow_html=True)
+        b2.markdown(f'<div class="gw-fhead"><span class="gw-tile" style="background:#1d6f42">SF</span>'
+                    f'<span>{html.escape(s.fund)}</span></div>', unsafe_allow_html=True)
     ret, tone = ret_text(s)
-    st.markdown(f'<div class="g-hold"><div><div class="lbl">Current value</div><div class="big">{calc.inr(s.current_value)}</div>'
-                f'<div class="lbl" style="margin-top:4px">Returns <b class="{tone}">{ret}</b></div></div>'
-                f'<div class="g-hold-r"><div class="lbl">Invested</div><div class="mid">{calc.inr(s.invested)}</div></div></div>',
-                unsafe_allow_html=True)
-    st.markdown('<div class="g-hint">✦ Tap a number: what does this mean for me?</div>', unsafe_allow_html=True)
-    tone_c = {"neg": ":red", "pos": ":green"}.get(tone, "")
-    xv = calc.signed_pct(s.xirr_pct, 1) if s.xirr_pct is not None else "—"
-    tiles = [("XIRR", f"{tone_c}[**{xv}**]" if tone_c and s.xirr_pct is not None else f"**{xv}**"),
-             ("Units", f"**{s.total_units:.2f}**"), ("NAV", f"**{calc.inr(s.current_nav, 2)}**")]
-    cols = st.container(key="tilebtn").columns(3)
-    for col, (name, v) in zip(cols, tiles):
-        if col.button(f"{name} :green[✦]  \n{v}", key=f"tile_{name}", width="stretch"):
-            ss.sheet = name
+    with st.container(key="holdcard"):
+        st.markdown(f'<div class="gw-cap">CURRENT VALUE</div><div class="gw-big">{calc.inr(s.current_value)}</div>'
+                    f'<div class="gw-dash"></div>', unsafe_allow_html=True)
+        kv_row("Invested", calc.inr(s.invested))
+        kv_row("", f'<span class="{tone}">{ret}</span>', tap=("Total returns", "Returns"), key="f_ret")
+        kv_row("", f'<span class="{tone if s.xirr_pct is not None else ""}">{xirr_text(s)}</span>',
+               tap=("XIRR", "XIRR"), key="f_xirr")
+        kv_row("", f"{s.total_units:.2f}", tap=("Units", "Units"), key="f_units")
+        kv_row("Avg. NAV", calc.inr(s.avg_nav, 2))
+        kv_row("", calc.inr(s.current_nav, 2), tap=("Current NAV", "NAV"), key="f_nav")
+    nxt = calc.fmt_date(s.next_instalment) if s.next_instalment else "--"
+    st.markdown(f'<div class="gw-card gw-sip"><div><div class="gw-muted">SIP · Monthly</div><b>{calc.inr(s.monthly_amount)}</b></div>'
+                f'<div style="text-align:right"><div class="gw-muted">Next instalment</div><b>{nxt}</b></div></div>'
+                f'<div class="gw-manage" {ui_style.DEAD}>Manage SIP <span>›</span></div>'
+                f'<div class="gw-sechead"><b>Transactions</b></div>', unsafe_allow_html=True)
+    rows = "".join(f'<div class="gw-tx"><div>{calc.fmt_date(i.date)}<div class="gw-muted">SIP · {i.units:.2f} units at '
+                   f'{i.nav:.2f}</div></div><div>{calc.inr(i.amount)}</div></div>' for i in reversed(s.instalments))
+    st.markdown(rows, unsafe_allow_html=True)
+    with st.container(key="fspill"):
+        if st.button("✦ Ask FinSaar", key="pill_ask", type="primary"):
+            ss.chat_back = "fund"
+            go("chat")
             st.rerun()
-
-    # "Your SIP this month": built only from the investor's own data (no market comparison)
-    last = s.instalments[-1]
-    most = max(s.instalments, key=lambda i: i.units)
-    extra = " (your most units so far)" if last is most and s.n_instalments > 1 else ""
-    st.markdown(f'<div class="fs-card"><div class="fs-label">✦ FinSaar · your SIP this month</div>'
-                f'Your {calc.fmt_date(last.date)} instalment of {calc.inr(last.amount)} bought <b>{last.units:.2f} units</b> '
-                f'at NAV {last.nav:.2f}{extra}. Today\'s NAV is {calc.inr(s.current_nav, 2)}.'
-                f'<div class="fs-src">From your SIP data · explains, doesn\'t advise</div></div>', unsafe_allow_html=True)
-    c1, _ = st.container(key="nudge").columns([1.4, 1])
-    if c1.button("Ask FinSaar about this", type="primary", key="fund_ask"):
-        ask(m["nudge_q"])
-        st.rerun()
-
-    st.markdown(f'<div class="ph-actions"><span {ui_style.DEAD}>Change amount</span><span {ui_style.DEAD}>Skip</span>'
-                f'<span {ui_style.DEAD}>Pause</span><span {ui_style.DEAD}>Cancel SIP</span></div>', unsafe_allow_html=True)
-
-    nxt = calc.fmt_date(s.next_instalment) if s.next_instalment else "—"
-    st.markdown(f'<div class="g-card"><div class="g-card-h">SIP details <span class="g-pill">Active</span></div>'
-                f'<div class="g-row"><span>Monthly amount</span><b>{calc.inr(s.monthly_amount)}</b></div>'
-                f'<div class="g-row"><span>Next instalment</span><b>{nxt}</b></div>'
-                f'<div class="g-row"><span>Average buy NAV</span><b>{calc.inr(s.avg_nav, 2)}</b></div></div>'
-                f'<div class="d-sec">Transactions</div>', unsafe_allow_html=True)
-    tx = st.container(key="txlist")
-    for idx, inst in enumerate(reversed(s.instalments)):
-        real = len(s.instalments) - 1 - idx
-        prev = s.instalments[real - 1] if real > 0 else None
-        if prev is None:
-            note, q = "First buy", f"What did my first {calc.inr(inst.amount)} buy?"
-        elif inst.units > prev.units:
-            note, q = "More units?", f"Why did my {calc.fmt_date(inst.date)} instalment buy more units?"
-        else:
-            note, q = "Fewer units?", f"Why did my {calc.fmt_date(inst.date)} instalment buy fewer units?"
-        c1, c2 = tx.columns([3, 1.3], vertical_alignment="center")
-        c1.markdown(f'<div class="g-tx"><div><b>{calc.fmt_date(inst.date)}</b><div class="sub">NAV {inst.nav:.2f}</div></div>'
-                    f'<div class="amt">{calc.inr(inst.amount)}<div class="sub">{inst.units:.2f} units</div></div></div>',
-                    unsafe_allow_html=True)
-        if c2.button(f":green[✦] {note}", key=f"tx_{real}", width="stretch"):
-            ss.sheet = "Q:" + q
-            st.rerun()
-    bottom_nav("Mutual Funds")
 
 
 def bottom_sheet(s: calc.SipSummary, m: dict):
     """Entry point 2: tap a number → 'What does this mean for me?' sheet, inside the phone."""
     ss = st.session_state
-    key = ss.sheet
-    sheet = st.container(key="sheet")
-    with sheet:
+    metric = ss.sheet
+    question = m["tiles"][metric]
+    what, mine, follow = sheet_facts(metric, s)
+    val = {"XIRR": xirr_text(s), "NAV": calc.inr(s.current_nav, 2), "Units": f"{s.total_units:.2f}",
+           "Returns": ret_text(s)[0]}[metric]
+    title = {"Returns": "Total returns", "NAV": "Current NAV"}.get(metric, metric)
+    with st.container(key="sheet"):
         c1, c2 = st.columns([6, 1], vertical_alignment="center")
-        c2.button("✕", key="sheet_close", on_click=lambda: st.session_state.update(sheet=None))
-        if key.startswith("Q:"):
-            question, metric = key[2:], None
-            c1.markdown(f'<div class="sh-title">✦ FinSaar explains</div>', unsafe_allow_html=True)
-        else:
-            metric = key
-            question = m["tiles"][metric]
-            what, mine, follow = sheet_facts(metric, s)
-            val = {"XIRR": calc.signed_pct(s.xirr_pct, 1) if s.xirr_pct is not None else "—",
-                   "NAV": calc.inr(s.current_nav, 2), "Units": f"{s.total_units:.2f}"}[metric]
-            c1.markdown(f'<div class="sh-title">{metric} <span class="sh-val">{val}</span></div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="sh-sec">WHAT IT IS</div><div class="sh-txt">{what}</div>'
-                        f'<div class="sh-sec">YOUR NUMBER</div><div class="sh-txt">{mine}</div>', unsafe_allow_html=True)
+        c1.markdown(f'<div class="sh-grab"></div><div class="sh-title">{title} <span class="sh-val">{val}</span></div>',
+                    unsafe_allow_html=True)
+        if c2.button("✕", key="sheet_close", type="tertiary"):
+            ss.sheet = None
+            st.rerun()
+        st.markdown(f'<div class="sh-sec">What it is</div><div class="sh-txt">{what}</div>'
+                    f'<div class="sh-sec">Your number</div><div class="sh-txt">{mine}</div>'
+                    f'<div class="sh-sec">For you now</div>', unsafe_allow_html=True)
         ck = f"{s.scenario}|{question}|{ss.profile_label}|{ss.simpler}"
         kh = hashlib.md5(ck.encode()).hexdigest()[:10]
         if ck not in ss.sheet_cache:
@@ -458,10 +519,6 @@ def bottom_sheet(s: calc.SipSummary, m: dict):
             ss.turns.append(r)
             ss.feedback_done.add(len(ss.turns) - 1)
         r = ss.sheet_cache[ck]
-        if metric:
-            st.markdown('<div class="sh-sec">WHAT IT MEANS FOR YOU NOW</div>', unsafe_allow_html=True)
-        else:
-            st.markdown(f'<div class="sh-txt"><b>{html.escape(question)}</b></div>', unsafe_allow_html=True)
         answer_card(r, s, show_question=False)
         b1, b2, b3 = st.container(key=f"fbsheet{kh}").columns(3)
         if b1.button("Yes, clear", key=f"sy{kh}", type="primary"):
@@ -471,19 +528,16 @@ def bottom_sheet(s: calc.SipSummary, m: dict):
                     ss.understood.append(name)
             ss.sheet = None
             st.rerun()
-        if b2.button("Explain simpler", key=f"ss{kh}", disabled=ss.simpler):
+        if b2.button("Simpler", key=f"ss{kh}", disabled=ss.simpler):
             ss.simpler = True
             st.rerun()
         if b3.button("Ask more", key=f"sm{kh}"):
             ss.chat_back = ss.screen
             go("chat")
             st.rerun()
-        if metric:
-            follow = sheet_facts(metric, s)[2]
-            st.markdown('<div class="sh-sec">ASK A FOLLOW-UP</div>', unsafe_allow_html=True)
-            fcols = st.container(key="sheetchips")
+        with st.container(key="sheetchips"):
             for n, fq in enumerate(follow):
-                if fcols.button(fq, key=f"sf{kh}{n}"):
+                if st.button(fq, key=f"sf{kh}{n}"):
                     ask(fq)
                     st.rerun()
 
@@ -491,46 +545,41 @@ def bottom_sheet(s: calc.SipSummary, m: dict):
 def screen_chat(s: calc.SipSummary, m: dict):
     ss = st.session_state
     with st.container(key="backbtn"):
-        b1, b2 = st.columns([1, 6], vertical_alignment="center")
-        if b1.button("←", key="chat_back_btn", help="Back"):
-            go(ss.chat_back if ss.chat_back in ("home", "fund") else "fund")
+        b1, b2 = st.columns([1, 7], vertical_alignment="center")
+        if b1.button("←", key="chat_back_btn", type="tertiary"):
+            go(ss.chat_back if ss.chat_back in ("mf", "fund") else "mf")
             st.rerun()
-        b2.markdown(f'<div class="ph-title">✦ FinSaar</div><div class="ph-sub">{html.escape(s.fund)} · explains your '
-                    f'SIP, doesn\'t advise</div>', unsafe_allow_html=True)
-
+        b2.markdown('<div class="gw-fhead"><span class="fs-dot big">✦</span><span>FinSaar</span></div>',
+                    unsafe_allow_html=True)
     if ss.pending:
         q = ss.pending
         ss.pending = None
         with st.spinner("FinSaar is reading your SIP…"):
             ss.turns.append(run_question(q, s))
-
     if not ss.turns:
-        st.markdown('<div class="fs-card"><div class="fs-label">✦ FinSaar</div>Namaste! I explain <b>your own SIP '
-                    'numbers</b> in English or Hinglish. Ask anything. I never tell you what to do with your money; '
-                    'the decision is always yours.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="fs-card"><div class="fs-label">✦ FinSaar</div>Ask me anything about your SIP, in '
+                    'English or Hinglish. I explain; the decision is always yours.</div>', unsafe_allow_html=True)
     for i, r in enumerate(ss.turns):
         answer_card(r, s)
         if i == len(ss.turns) - 1 and i not in ss.feedback_done and r.kind != "limit":
-            st.markdown('<div class="fs-help">Did this help?</div>', unsafe_allow_html=True)
             c1, c2, c3 = st.container(key=f"fb{i}").columns(3)
             c1.button("Yes, clear", key=f"yes{i}", on_click=on_yes, args=(i,), type="primary")
-            c2.button("Explain simpler", key=f"simp{i}", on_click=on_simpler, args=(i,))
+            c2.button("Simpler", key=f"simp{i}", on_click=on_simpler, args=(i,))
             c3.button("Ask another", key=f"more{i}", on_click=on_another, args=(i,))
-    if ss.hint:
-        st.caption(ss.hint)
-    st.pills("Try asking", m["chips"], key="chip", on_change=on_chip, selection_mode="single")
+    if ss.understood or ss.simpler:
+        st.markdown(f'<div class="memory">{html.escape(memory_line())}</div>', unsafe_allow_html=True)
+    st.pills("Suggested", m["chips"], key="chip", on_change=on_chip, selection_mode="single",
+             label_visibility="collapsed")
     with st.form("ask_form", clear_on_submit=True, border=False):
-        c1, c2 = st.container(key="askbox").columns([4, 1])
+        c1, c2 = st.container(key="askbox").columns([5, 1])
         text = c1.text_input("Ask about your SIP", placeholder="Ask about your SIP…", label_visibility="collapsed",
                              max_chars=300)
         if c2.form_submit_button("➤", width="stretch") and text.strip():
             ask(text.strip())
             st.rerun()
-    st.markdown(f'<div class="memory">{html.escape(memory_line())}<br><span>Learning lasts for this session; '
-                f'cross-session learning is planned.</span></div>', unsafe_allow_html=True)
 
 
-# ---------- side panels (outside the phone) ----------
+# ---------- controls (outside the phone, for mentors) ----------
 
 def controls_panel():
     ss = st.session_state
@@ -541,47 +590,15 @@ def controls_panel():
     ss.w_scenario = ss.scenario
     st.selectbox("Journey moment · for testing only", list(SCENARIOS), format_func=SCENARIOS.get,
                  key="w_scenario", on_change=on_scenario)
-    st.caption("The real flow is ③ The dip. ① and ② are for testing: the same SIP earlier, where the FinSaar "
-               "card stays hidden because the value is not below invested.")
     c1, c2 = st.columns(2)
-    c1.button("Simulate next visit", on_click=on_next_visit, width="stretch",
-              help="Clears the chat but keeps what FinSaar learned, to show 'Last time: NAV. XIRR next?'")
-    c2.button("Reset session", on_click=on_reset, width="stretch")
+    c1.button("Next visit", on_click=on_next_visit, width="stretch",
+              help="Clears the chat, keeps what FinSaar learned: shows 'Last time: … next?'")
+    c2.button("Reset", on_click=on_reset, width="stretch")
     st.markdown(f'<div class="pc-task"><b>🧪 Try this task</b><br>{TASK}</div>', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     c1.page_link(HOW_PAGE, label="Guide", icon="📖")
-    c2.page_link(EVAL_PAGE, label="Eval results", icon="✅")
-    st.caption(f"Questions used: {ss.q_count}/{pipeline.LIMIT} · visit {ss.visit}")
-
-
-NOTES = {
-    "home": ("Entry point 1 · when value falls below invested",
-             ["**Code decides** when the card appears: only when current value is below invested.",
-              "A **card, not a pop-up** or push alert. Dismissible with *Maybe later*.",
-              "After *Simulate next visit*, it becomes **entry point 3**: *Last time: NAV. XIRR next?*"]),
-    "fund": ("Entry point 2 · tap a number",
-             ["Tap **XIRR, Units or NAV** for *What does this mean for me?*",
-              "*What it is* and *your number* come from **code and AMFI**; the AI only explains *what it means "
-              "for you now*.",
-              "The ✦ on each transaction explains **that** instalment from your own data (RAG).",
-              "Change amount / Skip / Pause / Cancel are display-only."]),
-    "chat": ("Entry point 4 · any question, English or Hinglish",
-             ["Every answer passes the **eval gate**: numbers match code, no advice, no prediction, no fear, "
-              "grounded sources, short. Open *How this answer was checked*.",
-              "Ask *Should I stop and move to a better fund?* to see the **decline path**.",
-              "**Yes, clear** / **Explain simpler** teach FinSaar within the session."]),
-}
-
-
-def notes_panel(screen: str):
-    title, bullets = NOTES.get(screen, NOTES["home"])
-    st.markdown(f'<div class="pc-h">How it works</div><div class="nt-h">{title}</div>', unsafe_allow_html=True)
-    st.markdown("\n".join(f"- {b}" for b in bullets))
-    st.markdown('<div class="nt-h" style="margin-top:14px">Behind every answer</div>', unsafe_allow_html=True)
-    st.markdown("- **RAG:** reads your own SIP (instalments, units, NAV) + AMFI definitions.\n"
-                "- **Personalised:** level, language and stage shape the answer.\n"
-                "- **Learns:** remembers understood terms and *simpler* (this session).\n"
-                "- **Code calculates; AI explains.** It never advises or predicts.")
+    c2.page_link(EVAL_PAGE, label="Eval", icon="✅")
+    st.caption(f"Questions used: {ss.q_count}/{pipeline.LIMIT}")
 
 
 # ---------- the app page ----------
@@ -589,13 +606,15 @@ def notes_panel(screen: str):
 def app_page():
     init_state()
     ss = st.session_state
+    if ss.screen not in ("mf", "fund", "chat"):
+        ss.screen = "mf"
     s = calc.compute(scenario=ss.scenario)
     m = moment(s)
-    left, mid, right = st.columns([3.1, 4.4, 3.1], gap="medium")
+    left, mid, _ = st.columns([3, 4.4, 2.2], gap="medium")
     with left.container(key="ctrlpanel"):
         controls_panel()
     with mid:
-        phone = st.container(key="phone", height=760)
+        phone = st.container(key="phone", height=780)
         with phone:
             status_bar()
             try:
@@ -604,20 +623,14 @@ def app_page():
                 elif ss.screen == "fund":
                     screen_fund(s, m)
                 else:
-                    screen_home(s, m)
-            except Exception:  # never show a traceback inside the phone
-                st.markdown(f'<div class="fs-card"><div class="fs-label">✦ FinSaar</div>Something went wrong on our '
-                            f'side, so here are your plain numbers. Tap <b>Reset session</b> on the left to start '
-                            f'again.{numbers_table(s)}</div>', unsafe_allow_html=True)
-            if ss.sheet and ss.screen in ("fund", "home"):
-                try:
+                    screen_mf(s, m)
+                if ss.sheet and ss.screen in ("fund", "mf"):
                     bottom_sheet(s, m)
-                except Exception:
-                    ss.sheet = None
-                    st.markdown(f'<div class="fs-card">Something went wrong, so here are your plain numbers.'
-                                f'{numbers_table(s)}</div>', unsafe_allow_html=True)
-    with right.container(key="notespanel"):
-        notes_panel(ss.screen)
+            except Exception:  # never show a traceback inside the phone
+                ss.sheet = None
+                st.markdown(f'<div class="fs-card"><div class="fs-label">✦ FinSaar</div>Something went wrong on our '
+                            f'side, so here are your plain numbers. Tap <b>Reset</b> on the left to start again.'
+                            f'{numbers_table(s)}</div>', unsafe_allow_html=True)
 
 
 # ---------- navigation: Guide → app, plus Eval ----------

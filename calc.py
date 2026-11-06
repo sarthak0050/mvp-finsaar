@@ -37,6 +37,14 @@ class SipSummary:
     nav_drop_pct: float = field(default=0.0)  # that drop as % of avg buy NAV
     scenario: str = "dip"
     next_instalment: date | None = None
+    prev_nav: float | None = None   # yesterday's NAV, for the app's "1D returns" row only (not given to the AI)
+
+    @property
+    def one_day(self) -> tuple[float, float] | None:
+        if not self.prev_nav:
+            return None
+        chg = self.total_units * (self.current_nav - self.prev_nav)
+        return chg, chg / (self.total_units * self.prev_nav) * 100
 
     @property
     def n_instalments(self) -> int:
@@ -123,6 +131,7 @@ def compute(sip: dict | None = None, scenario: str | None = None) -> SipSummary:
         avg_nav=avg_nav, current_value=value, gain=gain, gain_pct=gain / invested * 100,
         xirr_pct=xr, nav_drop=avg_nav - cur_nav, nav_drop_pct=(avg_nav - cur_nav) / avg_nav * 100,
         scenario=sc["id"], next_instalment=date.fromisoformat(nxt) if nxt else None,
+        prev_nav=float(sc["prev_nav"]) if sc.get("prev_nav") else None,
     )
 
 
