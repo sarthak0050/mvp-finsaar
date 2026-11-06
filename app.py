@@ -22,7 +22,7 @@ MOMENT_SCENARIO = {"just": "start", "start": "start", "midway": "midway", "dip":
 TERM_ORDER = ["NAV", "XIRR", "Units", "Average buy NAV"]
 TERM_QUESTION = {"NAV": "What does NAV mean for me?", "Units": "What do my units mean for me?",
                  "XIRR": "What does XIRR mean for me?", "Average buy NAV": "What is my average buy NAV?"}
-FS = ":green[✦]"   # FinSaar mark inside Streamlit button labels
+FS = ":violet[✦]"   # FinSaar mark inside Streamlit button labels
 
 
 # ---------- what FinSaar offers for this SIP right now ----------
@@ -218,6 +218,10 @@ def on_moment():
         ss.visit = 1
 
 
+def on_lang_pick():
+    st.session_state.lang = st.session_state.w_lang or st.session_state.lang
+
+
 def on_open_chat():
     ss = st.session_state
     ss.chat_back = ss.screen if ss.screen != "chat" else "mf"
@@ -376,7 +380,13 @@ ICON = {
 
 
 def status_bar():
-    st.markdown('<div class="ph-status"><b>11:36</b><span class="ph-sig">▂▄▆█ <span class="ph-batt">83</span></span></div>',
+    sig = ('<svg viewBox="0 0 18 12" width="18" height="12"><rect x="0" y="8" width="3" height="4" rx="1"/>'
+           '<rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/>'
+           '<rect x="15" y="0" width="3" height="12" rx="1"/></svg>')
+    wifi = ('<svg viewBox="0 0 16 12" width="16" height="12"><path d="M8 11.5l2.2-2.6a3.2 3.2 0 0 0-4.4 0z"/>'
+            '<path d="M8 6.2a6 6 0 0 1 4.1 1.6l1.4-1.6A8.2 8.2 0 0 0 8 4a8.2 8.2 0 0 0-5.5 2.2l1.4 1.6A6 6 0 0 1 8 6.2z"/>'
+            '<path d="M8 2.2a10 10 0 0 1 6.8 2.6L16 3.4A11.9 11.9 0 0 0 8 .2 11.9 11.9 0 0 0 0 3.4l1.2 1.4A10 10 0 0 1 8 2.2z"/></svg>')
+    st.markdown(f'<div class="ph-status"><b>11:36</b><span class="ph-sig">{sig}{wifi}<span class="ph-batt">83</span></span></div>',
                 unsafe_allow_html=True)
 
 
@@ -698,6 +708,11 @@ def left_panel():
     with st.container(key="momentlist"):
         st.radio("Journey moment", list(MOMENTS), format_func=MOMENTS.get, key="w_moment", on_change=on_moment,
                  label_visibility="collapsed")
+    st.markdown('<div class="lp-cap" style="margin-top:22px">EXPLANATION LANGUAGE</div>', unsafe_allow_html=True)
+    ss.w_lang = ss.lang
+    with st.container(key="langseg"):
+        st.segmented_control("Language", ["English", "Hinglish"], key="w_lang", on_change=on_lang_pick,
+                             label_visibility="collapsed", width="stretch")
     with st.container(key="openchat"):
         st.button("✦  Open FinSaar chat", on_click=on_open_chat, width="stretch", type="primary")
     c1, c2, c3 = st.container(key="lplinks").columns(3, vertical_alignment="center")
@@ -714,7 +729,7 @@ def right_panel():
              ("03", "Grounded Q&amp;A", "English or Hinglish")]
     items = "".join(f'<div class="rp-step {"on" if i + 1 == active else ""}"><span class="rp-n">{n}</span>'
                     f'<div><b>{t}</b><div>{d}</div></div></div>' for i, (n, t, d) in enumerate(steps))
-    st.markdown(f'<div class="lp-cap">HOW IT WORKS</div><div class="rp-title">One feature,<br>three surfaces</div>'
+    st.markdown(f'<div class="lp-cap">APP BUILDER FLOW</div><div class="rp-title">One feature,<br>three surfaces</div>'
                 f'{items}<div class="rp-guard"><b>Built-in guardrails</b><div>✓ No advice</div><div>✓ No predictions</div>'
                 f'<div>✓ Numbers from code</div><div>✓ Sources shown</div><div>✓ Language and level learned from you</div></div>'
                 f'<div class="rp-note">Questions used: {ss.q_count}/{pipeline.LIMIT}</div>', unsafe_allow_html=True)
@@ -731,7 +746,7 @@ def app_page():
     m = moment(s)
     if ss.moment == "just" and ss.screen != "mf":
         ss.screen = "mf"
-    left, mid, right = st.columns([3, 4.2, 3], gap="large")
+    left, mid, right = st.columns([3, 4, 3], gap="large", vertical_alignment="center")
     with left.container(key="ctrlpanel"):
         left_panel()
     with mid:
@@ -752,7 +767,8 @@ def app_page():
                 st.markdown(f'<div class="fs-ans"><div class="fs-label">✦ FinSaar</div>Something went wrong on our '
                             f'side, so here are your plain numbers. Tap <b>Reset</b> to start again.'
                             f'{numbers_table(s)}</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ph-foot"><span class="dot"></span> Interactive prototype · Tap ✦ numbers</div>',
+        st.markdown('<div class="ph-foot"><span class="dot"></span> Interactive prototype · Tap ✦ numbers</div>'
+                    '<div class="ph-disc">Concept prototype · Fictional data · Not investment advice · Not affiliated with Groww</div>',
                     unsafe_allow_html=True)
     with right.container(key="notespanel"):
         right_panel()

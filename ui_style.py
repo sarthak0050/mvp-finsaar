@@ -350,11 +350,13 @@ def apply():
     st.markdown(APP_CSS, unsafe_allow_html=True)
     st.markdown(LINKS_CSS, unsafe_allow_html=True)
     st.markdown(SHEET_CSS, unsafe_allow_html=True)
-    st.markdown(PROTO, unsafe_allow_html=True)
+    st.markdown(REF_CSS, unsafe_allow_html=True)
+    st.markdown(POLISH_CSS, unsafe_allow_html=True)
 
 
 def brand_header():
     """Header for the non-app pages (How to use, Eval)."""
+    st.markdown(PROTO, unsafe_allow_html=True)
     st.markdown('<div class="app-brand"><span class="name">✦ FinSaar</span>'
                 '<span class="tag">Aapke SIP ka saar: a concept feature for Groww</span></div>', unsafe_allow_html=True)
 
@@ -625,5 +627,176 @@ SHEET_CSS = """
 /* chat: language switch sits on its own line under the chips, inside the card */
 [class*="st-key-anscard_"] [class*="st-key-langsw"] { margin-top: 2px; }
 .st-key-phone .memory { margin: 6px 0 4px; }
+</style>
+"""
+
+REF_CSS = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+.stApp, .stApp * { font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif !important; }
+.stApp [data-testid="stIconMaterial"], .stApp .material-symbols-rounded { font-family: "Material Symbols Rounded" !important; }
+:root { --fs: #5a4fcf; --fs-soft: #efedfc; --ink: #15181a; --sub: #5f6368; --line: #ececf0; }
+.block-container { padding-top: 2.2rem !important; }
+
+/* ---------- left panel ---------- */
+.lp-cap { font-size: .68rem !important; letter-spacing: 2.6px !important; color: #4d5a52 !important; font-weight: 600 !important; }
+.lp-title { font-size: 3.3rem !important; font-weight: 500 !important; letter-spacing: -2.4px !important; color: var(--ink) !important;
+  margin: 4px 0 12px; }
+.lp-sub { font-size: 1rem !important; color: #4a5550 !important; line-height: 1.6 !important; max-width: 340px; }
+.st-key-momentlist { border-radius: 16px !important; padding: 6px !important; border-color: #e2e8e0 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+.st-key-momentlist [role="radiogroup"] label { padding: 11px 14px !important; border-radius: 11px !important; }
+.st-key-momentlist [role="radiogroup"] label p { font-size: .88rem !important; color: #3d4742 !important; font-weight: 400 !important; }
+.st-key-momentlist label[data-testid="stRadioOption"][data-selected="true"] p { font-weight: 600 !important; color: var(--ink) !important; }
+.st-key-langseg [data-testid="stButtonGroup"] { background: #fff; border: 1px solid #e2e8e0; border-radius: 14px; padding: 4px; }
+.st-key-langseg [data-testid="stButtonGroup"] button { border: none !important; border-radius: 10px !important; background: transparent !important;
+  min-height: 40px; }
+.st-key-langseg [data-testid="stButtonGroup"] button p { font-size: .9rem !important; color: #4a5550; }
+.st-key-langseg [data-testid="stButtonGroup"] button[aria-checked="true"], .st-key-langseg [data-testid="stButtonGroup"] button[kind*="Active"] {
+  background: #f4f6f3 !important; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.st-key-langseg [data-testid="stButtonGroup"] button[aria-checked="true"] p, .st-key-langseg [data-testid="stButtonGroup"] button[kind*="Active"] p {
+  color: var(--ink) !important; font-weight: 600; }
+.st-key-openchat .stButton button { min-height: 52px !important; border-radius: 14px !important; background: #1d3a29 !important; }
+.st-key-openchat .stButton button p { font-weight: 600 !important; font-size: .95rem !important; }
+.st-key-lplinks .stButton button p, .st-key-lplinks [data-testid="stPageLink"] p { font-size: .8rem !important; color: #6b766f !important; }
+
+/* ---------- right panel ---------- */
+.rp-title { font-size: 2.3rem !important; font-weight: 500 !important; letter-spacing: -1.4px !important; color: var(--ink) !important; }
+.rp-step b { color: var(--ink) !important; font-weight: 600 !important; font-size: .95rem !important; }
+.rp-step div div { font-size: .76rem !important; }
+.rp-n { width: 42px !important; height: 42px !important; }
+.rp-step.on .rp-n { background: #1d3a29 !important; box-shadow: 0 0 0 6px #dde7da !important; }
+.rp-guard { border-radius: 16px !important; padding: 16px 20px !important; font-size: .78rem !important; line-height: 1.9 !important; }
+
+/* ---------- phone frame + footer ---------- */
+[data-testid="stLayoutWrapper"]:has(> .st-key-phone) { border-width: 11px !important; border-radius: 52px !important; max-width: 420px !important; }
+.st-key-phone { padding: 4px 14px 0 !important; color: var(--ink); }
+.ph-status { padding: 10px 14px 6px !important; font-size: .92rem !important; }
+.ph-status b { font-weight: 600; letter-spacing: .2px; }
+.ph-sig { display: inline-flex; gap: 6px; align-items: center; }
+.ph-sig svg { fill: var(--ink); }
+.ph-batt { border-radius: 6px !important; padding: 1px 6px !important; font-size: .7rem !important; }
+.ph-foot { margin-top: 16px !important; font-size: .8rem !important; color: #4d5a52 !important; }
+.ph-disc { text-align: center; font-size: .68rem; color: #8a958e; margin-top: 4px; }
+
+/* ---------- Mutual Funds header + tabs ---------- */
+.gw-head { padding: 8px 2px 10px !important; gap: 12px !important; }
+.gw-mark { width: 36px !important; height: 36px !important; }
+.gw-title { font-size: 1.22rem !important; font-weight: 600 !important; color: var(--ink) !important; letter-spacing: -.3px; }
+.gw-icons { gap: 18px !important; }
+.gw-av { width: 38px !important; height: 38px !important; font-size: .78rem !important; background: #eef3e3 !important; }
+.st-key-mftabs { margin: 0 -14px 14px !important; padding: 0 8px !important; }
+.st-key-mftabs .stButton button p { font-size: .92rem !important; font-weight: 500 !important; }
+[class*="st-key-tabon_"] .stButton button { border-bottom: 3px solid var(--ink) !important; }
+[class*="st-key-tabon_"] .stButton button p { font-weight: 600 !important; }
+
+/* ---------- holdings card ---------- */
+.st-key-holdcard { border-radius: 18px !important; padding: 18px 18px 12px !important; border-color: #ececf0 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.02); }
+.gw-cap { font-size: .66rem !important; letter-spacing: 3px !important; color: #6a6d75 !important; font-weight: 600 !important; }
+.gw-big { font-size: 1.85rem !important; font-weight: 500 !important; letter-spacing: -.6px; color: var(--ink) !important; margin-top: 6px !important; }
+.gw-eye { width: 44px !important; height: 44px !important; color: var(--ink); font-size: .95rem !important; }
+.gw-dash { margin: 14px 0 6px !important; border-top-color: #dcdde1 !important; }
+.gw-lbl { font-size: .92rem !important; color: #3c4043 !important; }
+.gw-val { font-size: .92rem !important; font-weight: 600; color: var(--ink) !important; }
+.fsm { color: var(--fs) !important; font-size: .72em !important; vertical-align: 1px; }
+[class*="st-key-tapv_"] .stButton button p { font-size: .92rem !important; font-weight: 600 !important; text-decoration-color: #8f939b !important; }
+.st-key-holdcard [data-testid="stHorizontalBlock"] { min-height: 44px !important; }
+
+/* ---------- FinSaar card (dashboard) ---------- */
+.st-key-fscard { background: linear-gradient(120deg, #f3f1ff 0%, #f1f7f6 100%) !important; border: 1px solid #dcd8f6 !important;
+  border-radius: 18px !important; padding: 16px 14px 12px !important; margin: 4px 0 16px !important; }
+.fs-icon { width: 42px !important; height: 42px !important; border-radius: 12px !important;
+  background: linear-gradient(135deg, #6b5fe0, #2d8f8a) !important; font-size: 1.05rem !important; }
+.fs-tag { color: var(--fs) !important; font-size: .74rem !important; font-weight: 600 !important; }
+.fs-title { font-size: .98rem !important; font-weight: 600 !important; margin: 4px 0 4px !important; color: var(--ink) !important; }
+.st-key-fscard .stButton button[kind="tertiary"] p { color: #4a4f57 !important; font-size: .86rem !important; font-weight: 500; }
+.st-key-fscard [data-testid="stColumn"]:last-child .stButton button p { color: #6a6d75 !important; font-size: 1.05rem !important; }
+
+/* ---------- fund row ---------- */
+.gw-listhead { margin: 4px 0 6px !important; }
+.gw-filter { width: 40px !important; height: 40px !important; }
+.gw-dotted { font-size: .86rem !important; color: var(--ink) !important; text-decoration: underline !important; text-underline-offset: 4px; }
+.gw-tile { width: 44px !important; height: 44px !important; border-radius: 11px !important; background: linear-gradient(140deg, #2c8a63, #134a33) !important;
+  font-size: 1rem !important; }
+.st-key-fundrow { padding: 10px 0 14px !important; }
+.st-key-fundrow .stButton button p { font-size: .92rem !important; }
+.st-key-fundrow .stButton button p strong { font-weight: 600 !important; }
+.gw-rowval { font-size: .95rem !important; font-weight: 600; }
+.gw-rowval small { font-weight: 400; }
+.gw-pill-btn { border-radius: 12px !important; padding: 10px 20px !important; font-size: .88rem !important; margin-top: 20px !important; }
+
+/* ---------- fund details ---------- */
+.st-key-fdhead { margin: 0 -14px 0 !important; padding: 4px 14px 10px !important; border-bottom: 1px solid var(--line) !important; }
+.fd-title { font-size: 1.05rem !important; font-weight: 600 !important; }
+.st-key-askbanner { margin: 14px 0 0; }
+.st-key-askbanner .stButton button { background: linear-gradient(120deg, #f3f1ff 0%, #f1f7f6 100%) !important; border: 1px solid #dcd8f6 !important;
+  border-radius: 16px !important; min-height: 68px !important; padding: 12px 16px !important; }
+.st-key-askbanner .stButton button p { font-size: .95rem !important; }
+.st-key-askbanner .stButton button p strong { font-weight: 600; color: #2c2a6b; }
+.fd-sec { font-size: 1.02rem !important; font-weight: 500 !important; margin: 0 !important; padding: 22px 0 6px !important;
+  border-top: 8px solid #f3f4f6; margin-left: -14px !important; margin-right: -14px !important; padding-left: 14px !important; margin-top: 18px !important; }
+[class*="st-key-drow_"] { border-bottom: 1px solid var(--line) !important; padding: 4px 0 !important; }
+.fd-lbl { font-size: .92rem !important; color: var(--ink) !important; }
+[class*="st-key-drow_"] .stButton button p { color: var(--fs) !important; font-weight: 600 !important; font-size: .92rem !important;
+  text-decoration: underline dotted #b3acef; text-underline-offset: 4px; }
+.fd-val { font-weight: 600 !important; padding-right: 2px !important; }
+.st-key-yoursip { border-top: 8px solid #f3f4f6 !important; border-bottom: 8px solid #f3f4f6 !important; margin: 18px -14px 0 !important;
+  padding: 18px 14px !important; }
+.fd-sip { font-size: 1.02rem !important; margin: 8px 0 4px !important; }
+.gw-tx { border-bottom: 1px solid var(--line) !important; }
+.gw-done { color: #1aa36b !important; font-size: .76rem !important; }
+
+/* ---------- chat ---------- */
+.ch-fund { border-radius: 16px !important; padding: 12px 14px !important; margin: 12px 0 10px !important; }
+.fs-ans.fs-greet { border-radius: 18px !important; padding: 14px 16px !important; }
+.fs-ans .fs-label, [class*="st-key-anscard_"] .fs-label { color: var(--fs) !important; font-size: .74rem !important; font-weight: 600 !important; }
+[class*="st-key-anscard_"] { border-radius: 18px !important; padding: 14px 16px !important; }
+[class*="st-key-anscard_"] .fs-body, .fs-ans .fs-body { font-size: .88rem !important; line-height: 1.55 !important; color: var(--ink) !important; }
+.st-key-phone .fs-q { background: #1d3a29 !important; border-radius: 18px 18px 6px 18px !important; font-size: .88rem !important;
+  padding: 13px 16px !important; }
+.fs-ans .fs-check, [class*="st-key-anscard_"] .fs-check { color: #1a8f57 !important; font-size: .76rem !important; }
+[class*="st-key-anscard_"] [class*="st-key-fb"] .stButton button { min-height: 32px !important; padding: 2px 14px !important; }
+[class*="st-key-anscard_"] [class*="st-key-fb"] .stButton button p { font-size: .78rem !important; }
+.st-key-askbox [data-testid="stFormSubmitButton"] button { width: 48px !important; height: 48px !important; }
+.st-key-askbox [data-testid="stFormSubmitButton"] button p { font-size: 1.15rem !important; font-weight: 700; }
+.st-key-askbox [data-testid="stTextInputRootElement"] { border-radius: 26px !important; }
+.st-key-askbox .stTextInput input { height: 48px !important; }
+.st-key-phone [data-testid="stButtonGroup"] button { border-radius: 18px !important; }
+.st-key-phone [data-testid="stButtonGroup"] button p { font-size: .8rem !important; }
+
+/* ---------- bottom nav ---------- */
+.gw-nav { padding: 10px 0 14px !important; border-top-color: var(--line) !important; }
+.gw-nav div { font-size: .7rem !important; color: #80838b !important; }
+.gw-nav div.on { color: #5367ff !important; font-weight: 600 !important; }
+.gw-nav svg { width: 24px !important; height: 24px !important; }
+</style>
+"""
+
+POLISH_CSS = """
+<style>
+/* tighter, even vertical rhythm inside the phone */
+.st-key-phone { gap: .6rem !important; }
+/* full-bleed pinned bars (phone padding is 14px) */
+.st-key-phone > [data-testid="stElementContainer"]:has(.gw-nav) { margin-left: -14px !important; margin-right: -14px !important;
+  width: calc(100% + 28px) !important; max-width: none !important; }
+.st-key-phone > *:has(.st-key-askbox), .st-key-phone > *:has(.st-key-sheet) { width: calc(100% + 28px) !important; max-width: none !important; }
+.st-key-phone > *:has(.st-key-askbox) { margin-left: -14px !important; margin-right: -14px !important; padding: 10px 14px 14px !important; }
+.st-key-phone > *:has(.st-key-sheet) { margin-left: -14px !important; margin-right: -14px !important; }
+/* holdings: tappable values on the same line as their labels */
+.st-key-holdcard .stButton button[kind="tertiary"] { top: 10px !important; }
+/* right-aligned values (fund details, your SIP) */
+[class*="st-key-drow_"] [data-testid="stColumn"]:last-child [data-testid="stElementContainer"],
+.st-key-yoursip [data-testid="stColumn"]:last-child [data-testid="stElementContainer"] { display: flex !important; justify-content: flex-end !important; }
+[class*="st-key-drow_"] [data-testid="stColumn"]:last-child .stButton,
+.st-key-yoursip [data-testid="stColumn"]:last-child .stButton { width: auto !important; }
+[class*="st-key-drow_"] [data-testid="stHorizontalBlock"] { min-height: 40px !important; }
+[class*="st-key-drow_"] [data-testid="stColumn"]:last-child > [data-testid="stVerticalBlock"],
+.st-key-yoursip [data-testid="stColumn"]:last-child > [data-testid="stVerticalBlock"] { align-items: flex-end !important; }
+[class*="st-key-drow_"] { padding: 6px 0 !important; }
+.fd-val { text-align: right; }
+/* FinSaar card: title and action sit close together */
+.st-key-fscard [data-testid="stColumn"] > [data-testid="stVerticalBlock"] { gap: 2px !important; }
+.st-key-fscard .fs-title { margin-bottom: 2px !important; }
 </style>
 """
