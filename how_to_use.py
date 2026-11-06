@@ -27,7 +27,7 @@ def render(next_page):
                          "opens a sheet: what it is, your number, what it means for you now."),
         ("Ask anything", "On the fund page, tap <b>✦ Ask FinSaar</b>. Ask in English or Hinglish. Then <b>Yes, clear</b>, <b>Explain "
                          "simpler</b> or <b>Ask another</b>. Try <i>Should I stop?</i>"),
-        ("Switch and come back", "On the left, switch the <b>demo investor</b>, or press <b>Simulate next visit</b> "
+        ("Switch and come back", "On the left, switch the <b>journey moment</b>, <b>language</b> or <b>level</b>; pick <b>Return visit</b> "
                                  "to see <i>Last time: NAV. XIRR next?</i>"),
     ]
     cols = st.columns(4)
