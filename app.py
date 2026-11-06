@@ -267,26 +267,31 @@ def links_html(r: pipeline.Result) -> str:
     return ""
 
 
-def answer_card(r: pipeline.Result, s: calc.SipSummary, show_question: bool = True):
+def answer_card(r: pipeline.Result, s: calc.SipSummary, show_question: bool = True, fb_index: int | None = None,
+                key: str = "a"):
     if show_question:
         st.markdown(f'<div class="fs-q">{html.escape(r.question)}</div>', unsafe_allow_html=True)
     body = html.escape(r.answer).replace("\n", "<br>")
     pre = '<div class="fs-outside">ⓘ Outside what I can help with</div>' if r.path == "decline" else ""
     extra = numbers_table(s) if r.show_numbers else ""
-    st.markdown(f'<div class="fs-ans"><div class="fs-label">✦ FinSaar</div>{pre}<div class="fs-body">{body}</div>'
-                f'{extra}{links_html(r)}<div class="fs-rule"></div>{status_html(r)}</div>', unsafe_allow_html=True)
-    with st.expander("How this answer was checked"):
-        if r.gate:
-            for c in r.gate.checks:
-                st.markdown(f"{'✅' if c.passed else '❌'} **{c.name}**: {html.escape(c.detail)}")
-        for n, a in enumerate(r.attempts, 1):
-            if not a["passed"]:
-                st.markdown(f"↻ Try {n} was blocked: {html.escape('; '.join(a['reasons']))}")
-        st.markdown(f"**Route:** {r.intent} → *{r.path}* ({r.kind})")
-        st.markdown(f"**Numbers used:** {', '.join(r.numbers_used) or 'only app-computed numbers'}")
-        st.markdown(f"**Sources:** {', '.join(r.sources)}")
-        for c in r.chunks:
-            st.caption(f"{c.label}: {c.text[:180]}{'…' if len(c.text) > 180 else ''}")
+    with st.container(key=f"anscard_{key}"):
+        st.markdown(f'<div class="fs-label">✦ FinSaar</div>{pre}<div class="fs-body">{body}</div>{extra}{links_html(r)}'
+                    f'<div class="fs-rule"></div>{status_html(r)}', unsafe_allow_html=True)
+        if fb_index is not None:
+            c1, c2, c3, _ = st.container(key=f"fb{fb_index}").columns([1.15, 1, 1.3, 0.4])
+            c1.button("Yes, clear", key=f"yes{fb_index}", on_click=on_yes, args=(fb_index,))
+            c2.button("Simpler", key=f"simp{fb_index}", on_click=on_simpler, args=(fb_index,))
+            c3.button("Ask another", key=f"more{fb_index}", on_click=on_another, args=(fb_index,))
+        with st.expander("How this was checked"):
+            if r.gate:
+                for c in r.gate.checks:
+                    st.markdown(f"{'✅' if c.passed else '❌'} **{c.name}**: {html.escape(c.detail)}")
+            for n, a in enumerate(r.attempts, 1):
+                if not a["passed"]:
+                    st.markdown(f"↻ Try {n} was blocked: {html.escape('; '.join(a['reasons']))}")
+            st.markdown(f"**Route:** {r.intent} → *{r.path}* ({r.kind})")
+            st.markdown(f"**Numbers used:** {', '.join(r.numbers_used) or 'only app-computed numbers'}")
+            st.markdown(f"**Sources:** {', '.join(r.sources)}")
 
 
 def memory_line() -> str:
@@ -360,7 +365,7 @@ def holding_row(label: str, value_html: str, metric: str | None, key: str):
                 unsafe_allow_html=True)
     if metric:
         with c2.container(key=f"tapv_{key}"):
-            if st.button(value_html, key=key, type="tertiary", help="FinSaar explains this number"):
+            if st.button(value_html, key=key, type="tertiary"):
                 st.session_state.sheet = metric
                 st.rerun()
     else:
@@ -491,7 +496,7 @@ def detail_row(label: str, value: str, metric: str | None, key: str, tone: str =
         c1, c2 = st.columns([1.3, 1.3], vertical_alignment="center")
         c1.markdown(f'<div class="fd-lbl">{label}</div>', unsafe_allow_html=True)
         if metric:
-            if c2.button(f"{FS} {value}  ›", key=key, type="tertiary", help="FinSaar explains this number"):
+            if c2.button(f"{FS} {value}  ›", key=key, type="tertiary"):
                 st.session_state.sheet = metric
                 st.rerun()
         else:
@@ -513,9 +518,7 @@ def screen_fund(s: calc.SipSummary, m: dict):
             go("chat")
             st.rerun()
     ret, tone = ret_text(s)
-    st.markdown(f'<div class="fd-sec">Your investment</div><div class="fd-fund"><span class="gw-tile">S</span>'
-                f'<div><b>{html.escape(s.fund)}</b><div class="gw-muted">Current {calc.inr(s.current_value)} · '
-                f'Invested {calc.inr(s.invested)}</div></div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="fd-sec">Your investment</div>', unsafe_allow_html=True)
     detail_row("Total returns", ret.split(" (")[0], "Returns", "d_ret")
     detail_row("XIRR", xirr_text(s), "XIRR", "d_xirr")
     detail_row("Units", f"{s.total_units:.2f}", "Units", "d_units")
@@ -531,13 +534,19 @@ def screen_fund(s: calc.SipSummary, m: dict):
             ss.tab = "SIPs"
             go("mf")
             st.rerun()
-    rows = "".join(f'<div class="gw-tx"><div>{i.date.day} {i.date.strftime("%b")} · {calc.inr(i.amount)} · '
-                   f'{i.units:.2f} units<div class="gw-muted">NAV {i.nav:.2f}</div></div>'
-                   f'<span class="gw-done">Completed</span></div>' for i in reversed(s.instalments))
+    rows = "".join(f'<div class="gw-tx"><span>{i.date.day} {i.date.strftime("%b")} · {calc.inr(i.amount)} · '
+                   f'{i.units:.2f} units</span><span class="gw-done">Completed</span></div>' for i in reversed(s.instalments))
     st.markdown(f'<div class="fd-sec">Transactions</div>{rows}', unsafe_allow_html=True)
 
 
 # ---------- phone: bottom sheet ----------
+
+def _sheet_follow(key: str):
+    q = st.session_state.get(key)
+    st.session_state[key] = None
+    if q:
+        ask(q)
+
 
 def bottom_sheet(s: calc.SipSummary, m: dict):
     """Entry point 2: tap a ✦ number → 'What does this mean for me?' sheet, inside the phone."""
@@ -548,19 +557,22 @@ def bottom_sheet(s: calc.SipSummary, m: dict):
     ret, tone = ret_text(s)
     val = {"XIRR": xirr_text(s), "NAV": calc.inr(s.current_nav, 2), "Units": f"{s.total_units:.2f}",
            "Returns": ret}[metric]
+    vtone = tone if metric in ("XIRR", "Returns") and s.xirr_pct is not None else ""
     title = {"Returns": "Total returns", "NAV": "Current NAV"}.get(metric, metric)
+    ck = f"{s.scenario}|{question}|{ss.lang}|{ss.level}|{ss.simpler}"
+    kh = hashlib.md5(ck.encode()).hexdigest()[:10]
     with st.container(key="sheet"):
-        c1, c2 = st.columns([6, 1], vertical_alignment="center")
-        c1.markdown(f'<div class="sh-grab"></div><div class="sh-title">{title} <span class="sh-val">{val}</span></div>',
-                    unsafe_allow_html=True)
-        if c2.button("✕", key="sheet_close", type="tertiary"):
-            ss.sheet = None
-            st.rerun()
+        st.markdown('<div class="sh-grab"></div>', unsafe_allow_html=True)
+        with st.container(key="shhead"):
+            c1, c2, c3 = st.columns([3, 2.2, 0.8], vertical_alignment="center")
+            c1.markdown(f'<div class="sh-title">{title}</div>', unsafe_allow_html=True)
+            c2.markdown(f'<div class="sh-val {vtone}">{val}</div>', unsafe_allow_html=True)
+            if c3.button("✕", key="sheet_close", type="tertiary", help="Close"):
+                ss.sheet = None
+                st.rerun()
         st.markdown(f'<div class="sh-sec">What it is</div><div class="sh-txt">{what}</div>'
                     f'<div class="sh-sec">Your number</div><div class="sh-txt">{mine}</div>'
-                    f'<div class="sh-sec">For you now</div>', unsafe_allow_html=True)
-        ck = f"{s.scenario}|{question}|{ss.lang}|{ss.level}|{ss.simpler}"
-        kh = hashlib.md5(ck.encode()).hexdigest()[:10]
+                    f'<div class="sh-sec">What it means for you now</div>', unsafe_allow_html=True)
         if ck not in ss.sheet_cache:
             with st.spinner("FinSaar is reading your SIP…"):
                 r = run_question(question, s)
@@ -568,27 +580,26 @@ def bottom_sheet(s: calc.SipSummary, m: dict):
             ss.turns.append(r)
             ss.feedback_done.add(len(ss.turns) - 1)
         r = ss.sheet_cache[ck]
-        answer_card(r, s, show_question=False)
-        b1, b2, b3 = st.container(key=f"fbsheet{kh}").columns(3)
-        if b1.button("Yes, clear", key=f"sy{kh}"):
-            for t in r.terms_explained:
-                name = canonical_term(t)
-                if name and name not in ss.understood:
-                    ss.understood.append(name)
-            ss.sheet = None
-            st.rerun()
-        if b2.button("Simpler", key=f"ss{kh}", disabled=ss.simpler):
-            ss.simpler = True
-            st.rerun()
-        if b3.button("Ask more", key=f"sm{kh}"):
-            ss.chat_back = ss.screen
-            go("chat")
-            st.rerun()
-        with st.container(key="sheetchips"):
-            for n, fq in enumerate(follow):
-                if st.button(fq, key=f"sf{kh}{n}"):
-                    ask(fq)
-                    st.rerun()
+        answer_card(r, s, show_question=False, key=f"sh{kh}")
+        with st.container(key=f"fbsheet{kh}"):
+            b1, b2, b3 = st.columns(3)
+            if b1.button("Yes, clear", key=f"sy{kh}", width="stretch"):
+                for t in r.terms_explained:
+                    name = canonical_term(t)
+                    if name and name not in ss.understood:
+                        ss.understood.append(name)
+                ss.sheet = None
+                st.rerun()
+            if b2.button("Simpler", key=f"ss{kh}", disabled=ss.simpler, width="stretch"):
+                ss.simpler = True
+                st.rerun()
+            if b3.button("Ask more", key=f"sm{kh}", width="stretch"):
+                ss.chat_back = ss.screen
+                go("chat")
+                st.rerun()
+        st.markdown('<div class="sh-sec">Ask a follow-up</div>', unsafe_allow_html=True)
+        st.pills("Follow-up", follow, key=f"sp{kh}", on_change=_sheet_follow, args=(f"sp{kh}",),
+                 selection_mode="single", label_visibility="collapsed")
 
 
 # ---------- phone: FinSaar chat ----------
@@ -606,7 +617,7 @@ def screen_chat(s: calc.SipSummary, m: dict):
     greet = ("Namaste. Main aapke SIP ke numbers ko simple shabdon mein samjha sakta hoon. Kya samajhna chahenge?"
              if ss.lang == "Hinglish" else
              "Hi. I can explain your SIP numbers in simple words. What would you like to understand?")
-    st.markdown(f'<div class="fs-ans"><div class="fs-label">✦ FinSaar</div><div class="fs-body">{greet}</div></div>',
+    st.markdown(f'<div class="fs-ans fs-greet"><div class="fs-label">✦ FinSaar</div><div class="fs-body">{greet}</div></div>',
                 unsafe_allow_html=True)
     if ss.pending:
         q = ss.pending
@@ -614,12 +625,8 @@ def screen_chat(s: calc.SipSummary, m: dict):
         with st.spinner("FinSaar is reading your SIP…"):
             ss.turns.append(run_question(q, s))
     for i, r in enumerate(ss.turns):
-        answer_card(r, s)
-        if i == len(ss.turns) - 1 and i not in ss.feedback_done and r.kind != "limit":
-            c1, c2, c3 = st.container(key=f"fb{i}").columns(3)
-            c1.button("Yes, clear", key=f"yes{i}", on_click=on_yes, args=(i,))
-            c2.button("Simpler", key=f"simp{i}", on_click=on_simpler, args=(i,))
-            c3.button("Ask another", key=f"more{i}", on_click=on_another, args=(i,))
+        last = i == len(ss.turns) - 1 and i not in ss.feedback_done and r.kind != "limit"
+        answer_card(r, s, fb_index=i if last else None, key=f"t{i}")
     if ss.understood or ss.simpler:
         st.markdown(f'<div class="memory">{html.escape(memory_line())} · <i>cross-session learning planned</i></div>',
                     unsafe_allow_html=True)
@@ -655,7 +662,7 @@ def left_panel():
                          label_visibility="collapsed", width="stretch")
     with st.container(key="openchat"):
         st.button("✦  Open FinSaar chat (testing)", on_click=on_open_chat, width="stretch", type="primary")
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3 = st.container(key="lplinks").columns(3, vertical_alignment="center")
     c1.page_link(HOW_PAGE, label="Guide")
     c2.page_link(EVAL_PAGE, label="Eval")
     c3.button("Reset", on_click=on_reset, type="tertiary")
