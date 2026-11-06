@@ -349,6 +349,7 @@ def apply():
     st.markdown(CSS_FIX, unsafe_allow_html=True)
     st.markdown(APP_CSS, unsafe_allow_html=True)
     st.markdown(LINKS_CSS, unsafe_allow_html=True)
+    st.markdown(SHEET_CSS, unsafe_allow_html=True)
     st.markdown(PROTO, unsafe_allow_html=True)
 
 
@@ -603,5 +604,26 @@ LINKS_CSS = """
 .st-key-lplinks [data-testid="stColumn"] { min-width: 0 !important; }
 .st-key-lplinks [data-testid="stPageLink"] a, .st-key-lplinks .stButton button { padding: 4px 0 !important; min-height: 0 !important; }
 .st-key-lplinks .stButton button p, .st-key-lplinks [data-testid="stPageLink"] p { font-size: .88rem !important; color: #1f3d2b !important; }
+</style>
+"""
+
+SHEET_CSS = """
+<style>
+/* sheet: no negative markdown margins, even rhythm, capped height so it reads as a sheet */
+.st-key-sheet { max-height: 560px !important; gap: 0 !important; padding: 6px 18px 14px !important; }
+.st-key-sheet > [data-testid="stElementContainer"], .st-key-sheet > [data-testid="stLayoutWrapper"] { margin-bottom: 10px; }
+.st-key-sheet .stMarkdown, .st-key-sheet [data-testid="stMarkdownContainer"] { margin-bottom: 0 !important; }
+.st-key-sheet .sh-sec { margin: 12px 0 3px !important; }
+.st-key-sheet .sh-sec:first-child { margin-top: 2px !important; }
+.st-key-sheet .sh-txt { line-height: 1.45; }
+.st-key-sheet .sh-val, .st-key-sheet .sh-title { white-space: nowrap; }
+.st-key-sheet [class*="st-key-anscard_"] { margin: 0 !important; padding: 10px 12px !important; }
+.st-key-sheet [class*="st-key-anscard_"] .fs-body { font-size: .84rem; }
+.st-key-shlang .stButton button p, [class*="st-key-langsw"] .stButton button p { font-size: .78rem !important; color: #3F7D0A !important; }
+.st-key-shlang, [class*="st-key-langsw"] { margin-top: -2px; }
+.st-key-sheet [data-testid="stButtonGroup"] { margin-top: 2px; }
+/* chat: language switch sits on its own line under the chips, inside the card */
+[class*="st-key-anscard_"] [class*="st-key-langsw"] { margin-top: 2px; }
+.st-key-phone .memory { margin: 6px 0 4px; }
 </style>
 """

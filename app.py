@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import html
+import re
 
 import streamlit as st
 
@@ -80,7 +81,7 @@ def init_state():
     ss = st.session_state
     ss.setdefault("moment", "dip")
     ss.setdefault("lang", "Hinglish")
-    ss.setdefault("level", "Beginner")
+    ss.setdefault("tech_uses", 0)
     ss.setdefault("understood", [])
     ss.setdefault("simpler", False)
     ss.setdefault("turns", [])
@@ -101,10 +102,44 @@ def scenario() -> str:
     return MOMENT_SCENARIO[st.session_state.moment]
 
 
+HINGLISH = {"kya", "hai", "hain", "mera", "meri", "mere", "paisa", "doob", "gaya", "kyun", "kyon", "karu", "karun", "rok",
+            "band", "nahi", "matlab", "iska", "aapka", "mujhe", "kitna", "abhi", "kaise", "samjha", "samjhao", "ho",
+            "raha", "rahi", "hoga", "chahiye", "kab", "mein", "ka", "ki", "ke", "du", "dun", "batao"}
+TECH = re.compile(r"\b(xirr|nav|cagr|absolute return|expense ratio|annuali[sz]ed|avg nav|average nav)\b", re.I)
+WHAT_IS = re.compile(r"\b(what is|what does|what's|meaning|matlab|kya hai|kya hota|explain)\b", re.I)
+
+
+def detect_lang(text: str) -> str | None:
+    """Hinglish in, Hinglish out: decide from the words the investor used."""
+    words = set(re.findall(r"[a-z]+", text.lower()))
+    if len(words & HINGLISH) >= 1:
+        return "Hinglish"
+    if len(words) >= 3:
+        return "English"
+    return None
+
+
+def learn_from_question(text: str):
+    ss = st.session_state
+    lang = detect_lang(text)
+    if lang:
+        ss.lang = lang
+    if TECH.search(text) and not WHAT_IS.search(text):   # uses terms confidently → knows basics
+        ss.tech_uses += 1
+
+
+def learned_level() -> str:
+    """Level is learned, not chosen: starts at beginner; using terms or marking 2+ terms clear → knows basics;
+    asking for simpler answers keeps it at beginner."""
+    ss = st.session_state
+    if ss.simpler:
+        return "beginner"
+    return "basics" if (ss.tech_uses >= 1 or len(ss.understood) >= 2) else "beginner"
+
+
 def current_profile() -> dict:
     ss = st.session_state
-    return {"level": "beginner" if ss.level == "Beginner" else "basics",
-            "language": "hinglish" if ss.lang == "Hinglish" else "english",
+    return {"level": learned_level(), "language": "hinglish" if ss.lang == "Hinglish" else "english",
             "understood": list(ss.understood), "simpler": ss.simpler}
 
 
@@ -183,14 +218,6 @@ def on_moment():
         ss.visit = 1
 
 
-def on_lang():
-    st.session_state.lang = st.session_state.w_lang or st.session_state.lang
-
-
-def on_level():
-    st.session_state.level = st.session_state.w_level or st.session_state.level
-
-
 def on_open_chat():
     ss = st.session_state
     ss.chat_back = ss.screen if ss.screen != "chat" else "mf"
@@ -206,7 +233,17 @@ def on_chip():
     q = st.session_state.get("chip")
     st.session_state.chip = None
     if q:
+        learn_from_question(q)
         ask(q)
+
+
+def on_switch_lang(i: int | None = None):
+    """'In English' / 'Hinglish mein' under an answer: switch the language and re-ask that question."""
+    ss = st.session_state
+    ss.lang = "English" if ss.lang == "Hinglish" else "Hinglish"
+    if i is not None and i < len(ss.turns):
+        ss.feedback_done.add(i)
+        ask(ss.turns[i].question)
 
 
 def on_yes(i: int):
@@ -268,7 +305,7 @@ def links_html(r: pipeline.Result) -> str:
 
 
 def answer_card(r: pipeline.Result, s: calc.SipSummary, show_question: bool = True, fb_index: int | None = None,
-                key: str = "a"):
+                key: str = "a", details: bool = True):
     if show_question:
         st.markdown(f'<div class="fs-q">{html.escape(r.question)}</div>', unsafe_allow_html=True)
     body = html.escape(r.answer).replace("\n", "<br>")
@@ -282,6 +319,11 @@ def answer_card(r: pipeline.Result, s: calc.SipSummary, show_question: bool = Tr
             c1.button("Yes, clear", key=f"yes{fb_index}", on_click=on_yes, args=(fb_index,))
             c2.button("Simpler", key=f"simp{fb_index}", on_click=on_simpler, args=(fb_index,))
             c3.button("Ask another", key=f"more{fb_index}", on_click=on_another, args=(fb_index,))
+            other = "In English" if st.session_state.lang == "Hinglish" else "Hinglish mein"
+            with st.container(key=f"langsw{fb_index}"):
+                st.button(f"🌐 {other}", key=f"lang{fb_index}", type="tertiary", on_click=on_switch_lang, args=(fb_index,))
+        if not details:
+            return
         with st.expander("How this was checked"):
             if r.gate:
                 for c in r.gate.checks:
@@ -300,6 +342,7 @@ def memory_line() -> str:
     if ss.simpler:
         bits.append("prefers simpler")
     bits.append(ss.lang)
+    bits.append("level: " + ("knows basics" if learned_level() == "basics" else "beginner"))
     return "FinSaar remembers: " + " · ".join(bits)
 
 
@@ -556,15 +599,15 @@ def bottom_sheet(s: calc.SipSummary, m: dict):
     what, mine, follow = sheet_facts(metric, s)
     ret, tone = ret_text(s)
     val = {"XIRR": xirr_text(s), "NAV": calc.inr(s.current_nav, 2), "Units": f"{s.total_units:.2f}",
-           "Returns": ret}[metric]
+           "Returns": ret.split(" (")[0]}[metric]
     vtone = tone if metric in ("XIRR", "Returns") and s.xirr_pct is not None else ""
     title = {"Returns": "Total returns", "NAV": "Current NAV"}.get(metric, metric)
-    ck = f"{s.scenario}|{question}|{ss.lang}|{ss.level}|{ss.simpler}"
+    ck = f"{s.scenario}|{question}|{ss.lang}|{learned_level()}|{ss.simpler}"
     kh = hashlib.md5(ck.encode()).hexdigest()[:10]
     with st.container(key="sheet"):
         st.markdown('<div class="sh-grab"></div>', unsafe_allow_html=True)
         with st.container(key="shhead"):
-            c1, c2, c3 = st.columns([3, 2.2, 0.8], vertical_alignment="center")
+            c1, c2, c3 = st.columns([3, 2.4, 0.7], vertical_alignment="center")
             c1.markdown(f'<div class="sh-title">{title}</div>', unsafe_allow_html=True)
             c2.markdown(f'<div class="sh-val {vtone}">{val}</div>', unsafe_allow_html=True)
             if c3.button("✕", key="sheet_close", type="tertiary", help="Close"):
@@ -572,7 +615,7 @@ def bottom_sheet(s: calc.SipSummary, m: dict):
                 st.rerun()
         st.markdown(f'<div class="sh-sec">What it is</div><div class="sh-txt">{what}</div>'
                     f'<div class="sh-sec">Your number</div><div class="sh-txt">{mine}</div>'
-                    f'<div class="sh-sec">What it means for you now</div>', unsafe_allow_html=True)
+                    f'<div class="sh-sec">For you now</div>', unsafe_allow_html=True)
         if ck not in ss.sheet_cache:
             with st.spinner("FinSaar is reading your SIP…"):
                 r = run_question(question, s)
@@ -580,7 +623,7 @@ def bottom_sheet(s: calc.SipSummary, m: dict):
             ss.turns.append(r)
             ss.feedback_done.add(len(ss.turns) - 1)
         r = ss.sheet_cache[ck]
-        answer_card(r, s, show_question=False, key=f"sh{kh}")
+        answer_card(r, s, show_question=False, key=f"sh{kh}", details=False)
         with st.container(key=f"fbsheet{kh}"):
             b1, b2, b3 = st.columns(3)
             if b1.button("Yes, clear", key=f"sy{kh}", width="stretch"):
@@ -597,7 +640,9 @@ def bottom_sheet(s: calc.SipSummary, m: dict):
                 ss.chat_back = ss.screen
                 go("chat")
                 st.rerun()
-        st.markdown('<div class="sh-sec">Ask a follow-up</div>', unsafe_allow_html=True)
+        with st.container(key="shlang"):
+            other = "In English" if ss.lang == "Hinglish" else "Hinglish mein"
+            st.button(f"🌐 {other}", key=f"shl{kh}", type="tertiary", on_click=on_switch_lang)
         st.pills("Follow-up", follow, key=f"sp{kh}", on_change=_sheet_follow, args=(f"sp{kh}",),
                  selection_mode="single", label_visibility="collapsed")
 
@@ -627,7 +672,7 @@ def screen_chat(s: calc.SipSummary, m: dict):
     for i, r in enumerate(ss.turns):
         last = i == len(ss.turns) - 1 and i not in ss.feedback_done and r.kind != "limit"
         answer_card(r, s, fb_index=i if last else None, key=f"t{i}")
-    if ss.understood or ss.simpler:
+    if ss.turns:
         st.markdown(f'<div class="memory">{html.escape(memory_line())} · <i>cross-session learning planned</i></div>',
                     unsafe_allow_html=True)
     st.pills("Suggested", m["chips"], key="chip", on_change=on_chip, selection_mode="single",
@@ -637,6 +682,7 @@ def screen_chat(s: calc.SipSummary, m: dict):
         text = c1.text_input("Ask about your SIP", placeholder="Ask anything about your SIP…",
                              label_visibility="collapsed", max_chars=300)
         if c2.form_submit_button("↑") and text.strip():
+            learn_from_question(text.strip())
             ask(text.strip())
             st.rerun()
 
@@ -647,27 +693,17 @@ def left_panel():
     ss = st.session_state
     st.markdown('<div class="lp-cap">CONCEPT MVP</div><div class="lp-title">FinSaar</div>'
                 '<div class="lp-sub">Your SIP speaks in numbers. FinSaar helps you make sense of them in your terms.</div>'
-                '<div class="lp-cap" style="margin-top:22px">JOURNEY MOMENT</div>', unsafe_allow_html=True)
+                '<div class="lp-cap" style="margin-top:26px">JOURNEY MOMENT</div>', unsafe_allow_html=True)
     ss.w_moment = ss.moment
     with st.container(key="momentlist"):
         st.radio("Journey moment", list(MOMENTS), format_func=MOMENTS.get, key="w_moment", on_change=on_moment,
                  label_visibility="collapsed")
-    st.markdown('<div class="lp-cap">EXPLANATION LANGUAGE</div>', unsafe_allow_html=True)
-    ss.w_lang = ss.lang
-    st.segmented_control("Language", ["English", "Hinglish"], key="w_lang", on_change=on_lang,
-                         label_visibility="collapsed", width="stretch")
-    st.markdown('<div class="lp-cap">LEVEL</div>', unsafe_allow_html=True)
-    ss.w_level = ss.level
-    st.segmented_control("Level", ["Beginner", "Knows basics"], key="w_level", on_change=on_level,
-                         label_visibility="collapsed", width="stretch")
     with st.container(key="openchat"):
-        st.button("✦  Open FinSaar chat (testing)", on_click=on_open_chat, width="stretch", type="primary")
+        st.button("✦  Open FinSaar chat", on_click=on_open_chat, width="stretch", type="primary")
     c1, c2, c3 = st.container(key="lplinks").columns(3, vertical_alignment="center")
     c1.page_link(HOW_PAGE, label="Guide")
     c2.page_link(EVAL_PAGE, label="Eval")
     c3.button("Reset", on_click=on_reset, type="tertiary")
-    st.markdown(f'<div class="lp-task"><b>Try this task</b><br>Your SIP is down. Find out whether you\'ve lost money '
-                f'and what your XIRR means. Then ask whether you should stop.</div>', unsafe_allow_html=True)
 
 
 def right_panel():
@@ -680,7 +716,7 @@ def right_panel():
                     f'<div><b>{t}</b><div>{d}</div></div></div>' for i, (n, t, d) in enumerate(steps))
     st.markdown(f'<div class="lp-cap">HOW IT WORKS</div><div class="rp-title">One feature,<br>three surfaces</div>'
                 f'{items}<div class="rp-guard"><b>Built-in guardrails</b><div>✓ No advice</div><div>✓ No predictions</div>'
-                f'<div>✓ Numbers from code</div><div>✓ Sources shown</div><div>✓ Every answer checked before it shows</div></div>'
+                f'<div>✓ Numbers from code</div><div>✓ Sources shown</div><div>✓ Language and level learned from you</div></div>'
                 f'<div class="rp-note">Questions used: {ss.q_count}/{pipeline.LIMIT}</div>', unsafe_allow_html=True)
 
 
