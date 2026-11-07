@@ -301,6 +301,9 @@ event = getattr(result, "event", None)
 if ask and ask.get("nonce") != ss.done_nonce:
     q = str(ask.get("q", "")).strip()[:300]
     if q:
+        detected = pipeline.detect_lang(q)          # reply in the language the question was asked in
+        if detected:
+            ss.lang = "Hinglish" if detected == "hinglish" else "English"
         ss.turns.append(run_question(q))
         ss.last_q = q
     ss.done_nonce = ask.get("nonce")

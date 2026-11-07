@@ -347,7 +347,7 @@ function chatSheet() {
       <div class="hrow"><div><div class="cap">FinSaar</div><h2>Let’s make this simple</h2></div>
       <div><button class="newchat" data-a="newchat">${I.refresh} New chat</button><button class="sheet-x" style="float:none" data-a="close" aria-label="Close">✕</button></div></div>
       <div class="langseg"><button class="${D.lang === 'English' ? 'on' : ''}" data-a="lang" data-v="English">English</button><button class="${D.lang === 'Hinglish' ? 'on' : ''}" data-a="lang" data-v="Hinglish">Hinglish</button></div>
-      <div class="note">FinSaar replies only in the language you pick here.</div></div>
+      <div class="note">FinSaar replies in the language you ask in. Pick one here for short questions.</div></div>
     <div class="chat-body"><div class="msg-bot">${I.spark}<div>${esc(greet)}</div></div>${chips}${msgs}${pend}</div>
     <div class="composer"><input id="fs-input" placeholder="Ask a follow-up" maxlength="300" autocomplete="off"><button class="send" data-a="send" aria-label="Send" ${S.pending ? 'disabled' : ''}>${I.send}</button></div>
     <div class="disc">Educational only. FinSaar doesn't give investment advice or predictions.</div></div>`;

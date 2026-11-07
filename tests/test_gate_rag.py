@@ -94,3 +94,14 @@ def test_golden_paths_classify_as_expected():
     assert len(rows) >= 15
     for r in rows:
         assert pipeline.classify(r["question"]) == r["expected_path"], r["id"]
+
+
+def test_detect_language():
+    import pipeline
+    for q in ["Iska matlab paisa doob gaya?", "kya bech du?", "XIRR ko simple mein samjhao", "NAV kam kyun hua?",
+              "Kya market wapas upar jayega?", "Mere kitne units hain aur unki value kitni hai?", "Kya mai SIP rok du?"]:
+        assert pipeline.detect_lang(q) == "hinglish", q
+    for q in ["What does XIRR mean for my SIP?", "Should I stop my SIP?", "Why are units up but value down?",
+              "Which fund should I switch to?", "Will my SIP recover by next month?", "Have I lost money?"]:
+        assert pipeline.detect_lang(q) == "english", q
+    assert pipeline.detect_lang("XIRR?") is None

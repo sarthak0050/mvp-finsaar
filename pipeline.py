@@ -38,6 +38,32 @@ def classify(question: str) -> str:
     return "answer"
 
 
+HINGLISH_WORDS = {
+    "kya", "hai", "hain", "ho", "hoga", "hogi", "mera", "meri", "mere", "mujhe", "aap", "aapka", "aapke", "aapki", "paisa",
+    "paise", "doob", "gaya", "gayi", "kyun", "kyu", "kyon", "karu", "karun", "karoon", "karna", "karein", "du", "dun", "doon",
+    "rok", "band", "nahi", "nahin", "matlab", "iska", "iski", "kitna", "kitne", "kitni", "abhi", "kaise", "samjhao",
+    "samjha", "chahiye", "kab", "mein", "ka", "ki", "ke", "ko", "se", "bech", "raha", "rahi", "rahe", "toh", "aur",
+    "sirf", "jab", "batao", "wapas", "upar", "jayega", "jaayega", "kam", "zyada", "badh", "gir", "unki", "unka", "yeh", "ye",
+}
+ENGLISH_WORDS = {
+    "what", "why", "how", "is", "are", "my", "the", "does", "do", "should", "i", "will", "mean", "means", "value", "units",
+    "down", "up", "and", "but", "of", "to", "it", "this", "lost", "money", "stop", "switch", "which", "fund", "worth",
+    "year", "next", "can", "me", "explain", "simple", "simply", "today", "going", "a", "an", "in", "for", "be", "much",
+}
+
+
+def detect_lang(question: str) -> str | None:
+    """Hinglish in, Hinglish out; English in, English out. None when the question is too short to tell."""
+    words = re.findall(r"[a-z]+", question.lower())
+    hi = sum(w in HINGLISH_WORDS for w in words)
+    en = sum(w in ENGLISH_WORDS for w in words)
+    if hi and hi * 3 >= en:
+        return "hinglish"
+    if en >= 2 or (en >= 1 and len(words) >= 3):
+        return "english"
+    return None
+
+
 def _is_fund_q(question: str) -> bool:
     return any(re.search(p, question.lower()) for p in FUND_PATTERNS)
 
