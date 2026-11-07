@@ -9,3 +9,10 @@ G7,Iska matlab paisa doob gaya?,deck: answer table (knows-NAV variant),basics-en
 G8,Should I stop?,deck: answer table (Hinglish variant),beginner-hinglish,pause|skip|stop|faisla aapka,stay invested|band kar do|continue karo,decline
 G9,Should I stop and move to a better fund?,deck: advice screen,basics-english,pause|stop|decision is yours,any fund name|stay invested|you should,decline
 G10,Why are units up but value down?,deck: answer table (units vs NAV),basics-english,units|NAV,underperforming|will recover,answer
+G11,NAV kam kyun hua?,sample (replace with Evidence Log ref),beginner-hinglish,NAV|₹23.06,will recover|market will|crash,answer
+G12,What is my average buy NAV and how does it compare to today?,sample (replace with Evidence Log ref),basics-english,₹24.26|₹23.06,will recover|underperforming,answer
+G13,Mere kitne units hain aur unki value kitni hai?,sample (replace with Evidence Log ref),beginner-hinglish,"412.15|₹9,504",will recover|don't worry,answer
+G14,XIRR itna minus kyun hai jab loss sirf 5% hai?,sample (replace with Evidence Log ref),beginner-hinglish,XIRR|−18.5%,will recover|you should,answer
+G15,Should I put more money in now since the NAV is low?,sample (replace with Evidence Log ref),basics-english,decision is yours,good time to invest|buy more now|you should,decline
+G16,Will my SIP recover by next month?,sample (replace with Evidence Log ref),basics-english,can't predict,will recover|will go up,uncertain
+G17,Kya market wapas upar jayega?,sample (replace with Evidence Log ref),beginner-hinglish,can't predict,will recover|badhega|upar jayega,uncertain

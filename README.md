@@ -71,8 +71,9 @@ The phrase lists live at the top of `gate.py`; add to them as you find new cases
 
 | File | What it does |
 |---|---|
-| `app.py` | UI: top bar (How to use → FinSaar MVP → Eval results, no sidebar), SIP on the left, FinSaar panel on the right, profile switch, mentor task, session learning |
-| `how_to_use.py` | landing page: how to use, with a Next button into the MVP |
+| `app.py` | Streamlit host: builds all data from `calc.py`, runs questions through `pipeline.py`, runs the golden set, and mounts the front end |
+| `ui/finsaar.js`, `ui/finsaar.css` | the FinSaar app front end (Streamlit custom component v2): Explore, Dashboard, SIPs, Watchlist, Quality, fund pages, explainer sheets and the chat |
+| `data/eval_history.json` | saved golden-set runs shown on the Quality tab |
 | `calc.py` | all numbers (units, average NAV, value, gain/loss, XIRR via bisection) |
 | `rag.py` | parses `knowledge.md`, embeddings + cosine, keyword fallback (cached) |
 | `llm.py` | system prompt, Gemini JSON call, model fallback, LLM judge for evals |
@@ -80,7 +81,6 @@ The phrase lists live at the top of `gate.py`; add to them as you find new cases
 | `pipeline.py` | intent rule → retrieve → generate → gate → retry → fallback (shared by app and eval) |
 | `eval_page.py` | golden-set evaluation page |
 | `config.py` | reads `st.secrets` / env vars |
-| `ui_style.py` | phone-frame CSS + banner |
 | `data/sip.json` | the fictional SIP, plus three journey moments (`scenarios`): first instalment, month 3 (value up), the dip (today) |
 | `data/knowledge.md` | plain-language definitions, each with a source line (`{AMFI_LINK}` is filled from secrets) |
 | `data/golden_set.csv` | golden questions |

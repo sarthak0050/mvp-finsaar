@@ -61,6 +61,15 @@
       "instalments": 5,
       "next_instalment": "2026-12-05",
       "prev_nav": 23.18
+    },
+    {
+      "id": "regular",
+      "label": "Regular day",
+      "date": "2026-11-05",
+      "nav": 25.48,
+      "instalments": 5,
+      "next_instalment": "2026-12-05",
+      "prev_nav": 25.3
     }
   ],
   "default_scenario": "dip"

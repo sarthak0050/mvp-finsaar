@@ -23,7 +23,7 @@ DECLINE_PATTERNS = [
 PREDICT_PATTERNS = [
     r"\bwill (it|my|the|this|nav|market|markets|value|sip|fund)\b", r"\brecover", r"\bnext (year|month|week)\b",
     r"\bfuture\b", r"\bpredict", r"\bforecast", r"\bhow much will\b", r"\bgoing to (rise|fall|go|recover|grow)\b",
-    r"\bkab tak\b", r"\bwap(a|aa)s aa", r"\bbadhega\b", r"\bgirega\b", r"\bkitna ho (jayega|jaega)\b", r"\baage kya\b",
+    r"\bkab tak\b", r"\bwap(a|aa)s aa", r"\bbadhega\b", r"\bgirega\b", r"\b(upar|neeche|niche|wap(a|aa)s)\s+(jayega|jaayega|aayega|aa jayega)\b", r"\bkitna ho (jayega|jaega)\b", r"\baage kya\b",
 ]
 FUND_PATTERNS = [r"\bwhich fund\b", r"\bbest fund\b", r"\bbetter fund\b", r"\b(kaunsa|konsa|kaun sa|kon sa) fund\b", r"\bswitch\b",
                  r"\brecommend", r"\bstock\b"]

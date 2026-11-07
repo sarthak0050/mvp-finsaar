@@ -86,3 +86,11 @@ def test_buy_more_units_is_description_not_advice():
     assert pipeline.classify("What will my SIP be worth next year?") == "uncertain"
     assert g("A lower NAV lets the same ₹2,000 buy more units.").passed
     assert not g("NAV is low, so invest more now.").passed
+
+
+def test_golden_paths_classify_as_expected():
+    import csv, pipeline
+    rows = list(csv.DictReader(open("data/golden_set.csv", encoding="utf-8-sig")))
+    assert len(rows) >= 15
+    for r in rows:
+        assert pipeline.classify(r["question"]) == r["expected_path"], r["id"]
