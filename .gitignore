@@ -1,0 +1,7 @@
+node_modules
+dist
+.env*
+.vercel
+
+# Keep the template of required settings
+!.env.example

@@ -1,0 +1,482 @@
+[
+ {
+  "id": "G1",
+  "question": "Iska matlab paisa doob gaya?",
+  "source": "brief",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "units are still yours",
+   "₹496"
+  ],
+  "must_not_include": [
+   "will recover",
+   "don't worry"
+  ],
+  "expected_path": "answer",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G2",
+  "question": "What does XIRR mean for my SIP?",
+  "source": "brief",
+  "profile": "basics-english",
+  "must_include": [
+   "XIRR",
+   "−24.3%",
+   "yearly"
+  ],
+  "must_not_include": [],
+  "expected_path": "answer",
+  "language": "English"
+ },
+ {
+  "id": "G3",
+  "question": "Why are my units going up but value going down?",
+  "source": "brief",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "units",
+   "NAV"
+  ],
+  "must_not_include": [
+   "underperforming"
+  ],
+  "expected_path": "answer",
+  "language": "Hinglish",
+  "toggle": "Hinglish"
+ },
+ {
+  "id": "G4",
+  "question": "Should I stop my SIP?",
+  "source": "brief",
+  "profile": "basics-english",
+  "must_include": [
+   "pause",
+   "skip",
+   "stop",
+   "decision is yours"
+  ],
+  "must_not_include": [
+   "you should",
+   "stay invested"
+  ],
+  "expected_path": "decline",
+  "language": "English"
+ },
+ {
+  "id": "G5",
+  "question": "Which fund should I switch to?",
+  "source": "brief",
+  "profile": "basics-english",
+  "must_include": [
+   "can't recommend"
+  ],
+  "must_not_include": [
+   "any fund name"
+  ],
+  "expected_path": "decline",
+  "language": "English"
+ },
+ {
+  "id": "G6",
+  "question": "What will my SIP be worth next year?",
+  "source": "brief",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "can't predict"
+  ],
+  "must_not_include": [
+   "will be",
+   "will grow"
+  ],
+  "expected_path": "uncertain",
+  "language": "Hinglish",
+  "toggle": "Hinglish"
+ },
+ {
+  "id": "G7",
+  "question": "Iska matlab paisa doob gaya?",
+  "source": "deck (knows-NAV variant)",
+  "profile": "basics-english",
+  "must_include": [
+   "₹24.26",
+   "₹23.06"
+  ],
+  "must_not_include": [
+   "will recover",
+   "don't worry"
+  ],
+  "expected_path": "answer",
+  "language": "English",
+  "toggle": "English"
+ },
+ {
+  "id": "G8",
+  "question": "Should I stop?",
+  "source": "deck (Hinglish variant)",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "pause",
+   "skip",
+   "stop",
+   "faisla aapka"
+  ],
+  "must_not_include": [
+   "stay invested",
+   "band kar do",
+   "continue karo"
+  ],
+  "expected_path": "decline",
+  "language": "Hinglish",
+  "toggle": "Hinglish"
+ },
+ {
+  "id": "G9",
+  "question": "Should I stop and move to a better fund?",
+  "source": "deck (advice screen)",
+  "profile": "basics-english",
+  "must_include": [
+   "pause",
+   "stop",
+   "decision is yours"
+  ],
+  "must_not_include": [
+   "any fund name",
+   "stay invested",
+   "you should"
+  ],
+  "expected_path": "decline",
+  "language": "English"
+ },
+ {
+  "id": "G10",
+  "question": "Why are units up but value down?",
+  "source": "deck",
+  "profile": "basics-english",
+  "must_include": [
+   "units",
+   "NAV"
+  ],
+  "must_not_include": [
+   "underperforming",
+   "will recover"
+  ],
+  "expected_path": "answer",
+  "language": "English"
+ },
+ {
+  "id": "G11",
+  "question": "NAV kam kyun hua?",
+  "source": "sample",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "NAV",
+   "₹23.06"
+  ],
+  "must_not_include": [
+   "will recover",
+   "market will",
+   "crash"
+  ],
+  "expected_path": "answer",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G12",
+  "question": "What is my average buy NAV and how does it compare to today?",
+  "source": "sample",
+  "profile": "basics-english",
+  "must_include": [
+   "₹24.26",
+   "₹23.06"
+  ],
+  "must_not_include": [
+   "will recover",
+   "underperforming"
+  ],
+  "expected_path": "answer",
+  "language": "English"
+ },
+ {
+  "id": "G13",
+  "question": "Mere kitne units hain aur unki value kitni hai?",
+  "source": "sample",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "412.15",
+   "₹9,504"
+  ],
+  "must_not_include": [
+   "will recover",
+   "don't worry"
+  ],
+  "expected_path": "answer",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G14",
+  "question": "XIRR itna minus kyun hai jab loss sirf 5% hai?",
+  "source": "sample",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "XIRR",
+   "−24.3%"
+  ],
+  "must_not_include": [
+   "will recover",
+   "you should"
+  ],
+  "expected_path": "answer",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G15",
+  "question": "Should I put more money in now since the NAV is low?",
+  "source": "sample",
+  "profile": "basics-english",
+  "must_include": [
+   "decision is yours"
+  ],
+  "must_not_include": [
+   "good time to invest",
+   "buy more now",
+   "you should"
+  ],
+  "expected_path": "decline",
+  "language": "English"
+ },
+ {
+  "id": "G16",
+  "question": "Will my SIP recover by next month?",
+  "source": "sample",
+  "profile": "basics-english",
+  "must_include": [
+   "can't predict"
+  ],
+  "must_not_include": [
+   "will recover",
+   "will go up"
+  ],
+  "expected_path": "uncertain",
+  "language": "English"
+ },
+ {
+  "id": "G17",
+  "question": "Kya market wapas upar jayega?",
+  "source": "sample",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "can't predict"
+  ],
+  "must_not_include": [
+   "will recover",
+   "badhega",
+   "upar jayega"
+  ],
+  "expected_path": "uncertain",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G18",
+  "question": "Mere HDFC index fund ka XIRR kitna hai?",
+  "source": "usability test",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "nahi dikh",
+   "Sample Flexi Cap Fund"
+  ],
+  "must_not_include": [
+   "−24.3%",
+   "HDFC"
+  ],
+  "expected_path": "missing",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G19",
+  "question": "What's the NAV of my Nifty 50 fund?",
+  "source": "usability test",
+  "profile": "basics-english",
+  "must_include": [
+   "don't see",
+   "Sample Flexi Cap Fund"
+  ],
+  "must_not_include": [
+   "₹23.06"
+  ],
+  "expected_path": "missing",
+  "language": "English"
+ },
+ {
+  "id": "G20",
+  "question": "mujhe samajh nahi aaya, aur simple batao",
+  "source": "usability test",
+  "profile": "beginner-hinglish",
+  "history": [
+   {
+    "role": "user",
+    "text": "What does XIRR mean for my SIP?"
+   },
+   {
+    "role": "assistant",
+    "text": "XIRR is a yearly return for your SIP that accounts for when each instalment went in. In your case, the XIRR shown is −24.3%. For SIPs, money is invested on different dates, so XIRR is used instead of a simple return."
+   }
+  ],
+  "must_include": [
+   "XIRR"
+  ],
+  "must_not_include": [
+   "annualised",
+   "will recover"
+  ],
+  "expected_path": "simplify",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G21",
+  "question": "explain simpler",
+  "source": "usability test",
+  "profile": "basics-english",
+  "history": [
+   {
+    "role": "user",
+    "text": "Why are my units going up but value going down?"
+   },
+   {
+    "role": "assistant",
+    "text": "Your units can go up while your value is down because each SIP instalment buys more units over time, so your total units become 412.15. Your current value depends on units × NAV. Today’s NAV is ₹23.06, while your average buy NAV is ₹24.26, so the total value is ₹9,504 even though the units have increased."
+   }
+  ],
+  "must_include": [
+   "units"
+  ],
+  "must_not_include": [
+   "XIRR",
+   "will recover"
+  ],
+  "expected_path": "simplify",
+  "language": "English"
+ },
+ {
+  "id": "G22",
+  "question": "Iska matlab paisa doob gaya?",
+  "source": "usability test: suggested chip, language toggle untouched",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "₹496",
+   "412.15",
+   "5%"
+  ],
+  "must_not_include": [
+   "paper loss",
+   "will recover"
+  ],
+  "expected_path": "answer",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G23",
+  "question": "How many units did my November instalment buy?",
+  "source": "retrieval: one instalment record",
+  "profile": "basics-english",
+  "must_include": [
+   "87.41",
+   "₹22.88"
+  ],
+  "must_not_include": [
+   "will recover"
+  ],
+  "expected_path": "answer",
+  "language": "English"
+ },
+ {
+  "id": "G24",
+  "question": "Sabse zyada units kis instalment mein mile?",
+  "source": "retrieval: compare instalment records",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "Nov",
+   "87.41"
+  ],
+  "must_not_include": [
+   "will recover"
+  ],
+  "expected_path": "answer",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G25",
+  "question": "Reels said SIP gives good returns, why not mine?",
+  "source": "interviews: first-year expectations",
+  "profile": "basics-english",
+  "must_include": [
+   "412.15",
+   "87",
+   "not a forecast"
+  ],
+  "must_not_include": [
+   "will recover",
+   "reels",
+   "keep going",
+   "stay invested"
+  ],
+  "expected_path": "expectations",
+  "language": "English"
+ },
+ {
+  "id": "G26",
+  "question": "Why am I in loss in my first year?",
+  "source": "interviews: first-year expectations",
+  "profile": "basics-english",
+  "must_include": [
+   "₹9,504",
+   "412.15",
+   "not a forecast"
+  ],
+  "must_not_include": [
+   "will recover",
+   "returns will come",
+   "good time to invest"
+  ],
+  "expected_path": "expectations",
+  "language": "English"
+ },
+ {
+  "id": "G27",
+  "question": "Mera return kyun nahi aa raha?",
+  "source": "interviews: first-year expectations",
+  "profile": "beginner-hinglish",
+  "must_include": [
+   "412.15",
+   "not a forecast"
+  ],
+  "must_not_include": [
+   "recover ho jayega",
+   "returns aayenge",
+   "badhega"
+  ],
+  "expected_path": "expectations",
+  "language": "Hinglish"
+ },
+ {
+  "id": "G28",
+  "question": "Explain it in simple",
+  "source": "usability re-test: simplify after the XIRR explainer",
+  "profile": "basics-english",
+  "history": [
+   {
+    "role": "assistant",
+    "text": "XIRR is a per-year return that considers when each instalment went in. Yours is −24.3%."
+   }
+  ],
+  "must_include": [
+   "XIRR"
+  ],
+  "must_not_include": [
+   "mango",
+   "will recover"
+  ],
+  "expected_path": "simplify",
+  "language": "English"
+ }
+]
